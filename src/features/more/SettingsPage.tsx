@@ -4,9 +4,10 @@ import { useSettings } from '../../state/settings'
 import { Card, Field, List, NumInput, Page, Section, Segmented, Toggle } from '../../components/ui'
 import type { Lang, Settings } from '../../db/types'
 import { SpeciesAvatar } from '../../components/icons'
+import { formatDate } from '../../lib/dates'
 
 export function SettingsPage() {
-  const { t, lt, settings, update } = useSettings()
+  const { t, lt, settings, update, money } = useSettings()
   const f = useFarm()
   useEffect(() => {
     if (window.location.hash.includes('prices')) setTimeout(() => document.getElementById('prices')?.scrollIntoView({ behavior: 'smooth' }), 100)
@@ -46,7 +47,7 @@ export function SettingsPage() {
       </Section>
       <section id="prices" className="mb-5 scroll-mt-20">
         <h2 className="mb-1 px-1 text-sm font-semibold tracking-wide text-stone-500 uppercase">{t('Joriy bozor narxlari', 'Текущие рыночные цены')}</h2>
-        <p className="mb-2 px-1 text-xs text-stone-500">{t("Poda qiymatini va «hozir sotsam» foydasini hisoblash uchun. Vazni bor hayvonlarga 1 kg narxi, qolganlarga 1 bosh narxi ishlatiladi.", 'Для оценки стада и прибыли «если продать сейчас». Для животных с весом берётся цена за кг, иначе — за голову.')}</p>
+        <p className="mb-2 px-1 text-xs text-stone-500">{t("Poda qiymatini va «hozir sotsam» foydasini hisoblash uchun. Ixtiyoriy: kiritilmasa, shu turdagi oxirgi sotuvingiz narxi olinadi.", 'Для оценки стада и прибыли «если продать сейчас». Необязательно: если не указано, берётся цена вашей последней продажи.')}</p>
         <List>
           {used.map((s) => (
             <div key={s.id} className="p-3">
@@ -55,6 +56,11 @@ export function SettingsPage() {
                 <NumInput value={settings.marketPrices[s.id]?.perKg} onChange={(v) => setPrice(s.id, 'perKg', v)} suffix={t("/kg tirik", '/кг жив.')} placeholder="—" />
                 <NumInput value={settings.marketPrices[s.id]?.perHead} onChange={(v) => setPrice(s.id, 'perHead', v)} suffix={t('/bosh', '/гол.')} placeholder="—" />
               </div>
+              {!settings.marketPrices[s.id]?.perKg && f.lastSaleOf(s.id) && (
+                <p className="mt-1 text-xs text-stone-500">
+                  {t('Kiritilmasa, oxirgi sotuvingiz narxi olinadi', 'Если не указано, берётся цена вашей последней продажи')}: {money(f.lastSaleOf(s.id)!.perKg)} / kg ({formatDate(f.lastSaleOf(s.id)!.date)})
+                </p>
+              )}
             </div>
           ))}
         </List>

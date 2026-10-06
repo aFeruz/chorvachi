@@ -1,15 +1,18 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { Trash2 } from 'lucide-react'
 import { useFarm } from '../../state/farm'
 import { useSettings } from '../../state/settings'
 import { Button, Callout, DateInput, Field, IconButton, NumInput, Page, Select, Textarea, Toggle, useUi } from '../../components/ui'
 import { CategoryGrid } from '../../components/CategoryGrid'
+import { PriceHint } from '../../components/PriceHint'
+import { priceHistory, priceStats } from '../../lib/calc/priceHistory'
 import { ScopePicker } from '../../components/ScopePicker'
 import { deleteExpense, saveExpense } from '../../db/repo'
 import { FEED_CATEGORY_KEYS } from '../../db/seed'
 import type { ID, Scope } from '../../db/types'
 import { today } from '../../lib/dates'
+import { groupDigits } from '../../lib/money'
 
 const UNITS = ['kg', 'tonna', 'l', 'dona', 'qop', "bog'", 'bosh', 'oy', 'kun', 'soat', 'kVt']
 
@@ -40,8 +43,32 @@ export function ExpenseForm() {
     return m
   }, [f.expenses])
 
+  // Shu turdagi oldingi xaridlar narxi — taklif sifatida
+  const priceInfo = useMemo(
+    () => (categoryId ? priceStats(priceHistory(f.expenses, { categoryId, feedItemId, excludeId: id })) : undefined),
+    [f.expenses, categoryId, feedItemId, id],
+  )
+  // Yangi yozuvda: oldin miqdor bilan yozilgan bo'lsa, o'sha birlik va "narx × miqdor" rejimiga o'tamiz (narxni o'zi yozmaymiz)
+  useEffect(() => {
+    if (id || !priceInfo?.unit || amount || unitPrice) return
+    setByUnit(true)
+    setUnit(priceInfo.unit)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [categoryId, feedItemId])
+  const lastUnitPrice = priceInfo?.unit && priceInfo.unit === unit && priceInfo.last.unitPrice ? Math.round(priceInfo.last.unitPrice) : undefined
+
+  const applyLastPrice = () => {
+    if (!priceInfo) return
+    if (priceInfo.unit && priceInfo.last.unitPrice) {
+      setByUnit(true)
+      setUnit(priceInfo.unit)
+      setUnitPrice(Math.round(priceInfo.last.unitPrice))
+    } else setAmount(priceInfo.last.amount)
+  }
+
   const cat = f.catMap.get(categoryId)
   const isFeed = !!cat?.key && FEED_CATEGORY_KEYS.includes(cat.key)
+  const unitOptions = [...new Set([...UNITS, unit])].map((u) => ({ value: u, label: u }))
   const total = byUnit ? Math.round((unitPrice ?? 0) * (qty ?? 0)) : amount ?? 0
   const valid = total > 0 && !!categoryId && (scope === 'farm' || !!targetId)
 
@@ -74,11 +101,24 @@ export function ExpenseForm() {
       title={id ? t('Xarajatni tahrirlash', 'Изменить расход') : t('Yangi xarajat', 'Новый расход')}
       actions={id && <IconButton onClick={remove} aria-label="delete"><Trash2 size={20} className="text-red-600" /></IconButton>}
     >
+      <CategoryGrid categories={f.categories.filter((c) => c.kind === 'expense')} value={categoryId} onChange={setCategoryId} usage={usage} />
+
+      {priceInfo && (
+        <PriceHint
+          stats={priceInfo}
+          kind="expense"
+          currentUnitPrice={byUnit ? unitPrice : qty && amount ? amount / qty : undefined}
+          currentAmount={total || undefined}
+          currentUnit={unit}
+          onApply={applyLastPrice}
+        />
+      )}
+
       <Toggle checked={byUnit} onChange={setByUnit} label={t('Narx × miqdor bilan hisoblash', 'Считать как цена × количество')} />
       {byUnit ? (
         <div className="mb-3 grid grid-cols-2 gap-3">
           <Field label={t('1 birlik narxi', 'Цена за единицу')} className="mb-0">
-            <NumInput value={unitPrice} onChange={setUnitPrice} suffix={t("so'm", 'сум')} />
+            <NumInput value={unitPrice} onChange={setUnitPrice} suffix={t("so'm", 'сум')} placeholder={lastUnitPrice ? groupDigits(lastUnitPrice) : undefined} />
           </Field>
           <Field label={t('Miqdori', 'Количество')} className="mb-0">
             <NumInput value={qty} onChange={setQty} decimals suffix={unit} />
@@ -89,11 +129,10 @@ export function ExpenseForm() {
         </div>
       ) : (
         <Field label={t('Summa', 'Сумма')}>
-          <NumInput autoFocus={!id} value={amount} onChange={setAmount} suffix={t("so'm", 'сум')} className="[&_input]:h-14 [&_input]:text-2xl [&_input]:font-semibold" />
+          <NumInput value={amount} onChange={setAmount} suffix={t("so'm", 'сум')} className="[&_input]:h-14 [&_input]:text-2xl [&_input]:font-semibold" />
         </Field>
       )}
 
-      <CategoryGrid categories={f.categories.filter((c) => c.kind === 'expense')} value={categoryId} onChange={setCategoryId} usage={usage} />
 
       <Field label={t('Sana', 'Дата')}>
         <DateInput value={date} onChange={setDate} />
@@ -105,13 +144,13 @@ export function ExpenseForm() {
             <NumInput value={qty} onChange={setQty} decimals placeholder="—" />
           </Field>
           <Field label={t('Birlik', 'Ед.')}>
-            <Select value={unit} onChange={(e) => setUnit(e.target.value)} options={UNITS.map((u) => ({ value: u, label: u }))} className="w-28" />
+            <Select value={unit} onChange={(e) => setUnit(e.target.value)} options={unitOptions} className="w-28" />
           </Field>
         </div>
       )}
       {byUnit && (
         <Field label={t('Birlik', 'Ед.')}>
-          <Select value={unit} onChange={(e) => setUnit(e.target.value)} options={UNITS.map((u) => ({ value: u, label: u }))} />
+          <Select value={unit} onChange={(e) => setUnit(e.target.value)} options={unitOptions} />
         </Field>
       )}
       {!byUnit && qty && amount ? (

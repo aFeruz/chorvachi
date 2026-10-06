@@ -58,6 +58,10 @@ export interface Farmx extends FarmData {
   /** Joriy bozor narxi bo'yicha poda qiymati */
   herdValue: number
   valueOfAnimal: (a: Animal) => number | undefined
+  /** Shu turdagi oxirgi tirik sotuvingiz: 1 kg narxi va sanasi */
+  lastSaleOf: (speciesId: ID) => { perKg: number; date: string } | undefined
+  /** 1 kg tirik vazn narxi: qo'lda kiritilgan bozor narxi, bo'lmasa oxirgi sotuv narxi */
+  marketPerKg: (speciesId: ID) => number | undefined
 }
 
 const FarmCtx = createContext<Farmx | null>(null)
@@ -158,29 +162,43 @@ export function FarmProvider({ children, fallback }: { children: ReactNode; fall
       if (isGroupMode(g) && g.status === 'active')
         headsBySpecies.set(g.speciesId, (headsBySpecies.get(g.speciesId) ?? 0) + headsOf(g))
 
+    // Har bir tur bo'yicha oxirgi tirik sotuv narxi (1 kg)
+    const lastSale = new Map<ID, { perKg: number; date: string }>()
+    for (const inc of data.incomes) {
+      if (inc.categoryId !== 'in_animal_sale' || !inc.weightKg) continue
+      const sid = inc.animalIds?.length ? animalMap.get(inc.animalIds[0])?.speciesId : groupMap.get(inc.targetId ?? '')?.speciesId
+      if (!sid) continue
+      const prev = lastSale.get(sid)
+      if (!prev || inc.date > prev.date) lastSale.set(sid, { perKg: inc.amount / inc.weightKg, date: inc.date })
+    }
+    const lastSaleOf = (sid: ID) => lastSale.get(sid)
+    const marketPerKg = (sid: ID) => settings.marketPrices[sid]?.perKg || lastSale.get(sid)?.perKg
+
     const valueOfAnimal = (a: Animal) => {
-      const mp = settings.marketPrices[a.speciesId]
+      const perKg = marketPerKg(a.speciesId)
       const w = weightOf(a.id)
-      if (mp?.perKg && w) return mp.perKg * w
-      if (mp?.perHead) return mp.perHead
+      if (perKg && w) return perKg * w
+      const perHead = settings.marketPrices[a.speciesId]?.perHead
+      if (perHead) return perHead
       return undefined
     }
     let herdValue = 0
     for (const a of activeAnimals) herdValue += valueOfAnimal(a) ?? 0
     for (const g of data.groups) {
       if (!isGroupMode(g) || g.status !== 'active') continue
-      const mp = settings.marketPrices[g.speciesId]
+      const perKg = marketPerKg(g.speciesId)
+      const perHead = settings.marketPrices[g.speciesId]?.perHead
       const heads = headsOf(g)
       const w = groupWeightOf(g.id)
-      if (mp?.perKg && w) herdValue += mp.perKg * w * heads
-      else if (mp?.perHead) herdValue += mp.perHead * heads
+      if (perKg && w) herdValue += perKg * w * heads
+      else if (perHead) herdValue += perHead * heads
     }
 
     return {
       ...data,
       speciesMap, catMap, groupMap, animalMap, activeAnimals,
       costs: units, unallocated, costOf, groupCost, isGroupMode, headsOf, weightOf, groupWeightOf,
-      headsBySpecies, herdValue, valueOfAnimal,
+      headsBySpecies, herdValue, valueOfAnimal, lastSaleOf, marketPerKg,
     }
   }, [data, settings.marketPrices])
 

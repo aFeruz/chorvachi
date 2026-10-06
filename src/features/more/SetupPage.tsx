@@ -1,13 +1,12 @@
 import { useMemo, useState, type ReactNode } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Bell, CheckSquare, Square, Tags, TrendingUp, Wand2, Wheat } from 'lucide-react'
+import { Bell, CheckSquare, Square, Tags, Wand2, Wheat } from 'lucide-react'
 import { useFarm } from '../../state/farm'
 import { useSettings } from '../../state/settings'
 import { Button, Callout, cx, Empty, List, Page, Section, useUi } from '../../components/ui'
 import { IconTile, SpeciesIcon } from '../../components/icons'
 import { db, uid } from '../../db/db'
 import { COMMON_TEMPLATE, TEMPLATES, tplCategoryId, type TplCategory, type TplFeed } from '../../db/templates'
-import { SPECIES_SEED } from '../../db/seed'
 import type { LText, Species } from '../../db/types'
 import { addDays, formatDate, today } from '../../lib/dates'
 import { formatNum } from '../../lib/money'
@@ -17,14 +16,13 @@ type Item =
   | { id: string; kind: 'feed'; feed: TplFeed }
   | { id: string; kind: 'ration'; feed: TplFeed; species: Species }
   | { id: string; kind: 'health'; title: string; type: string; date: string; species: Species }
-  | { id: string; kind: 'price'; species: Species; perKg: number }
 
 const norm = (s: string) => s.trim().toLowerCase()
 
 /** Tanlangan turlar uchun kategoriya, yem, ratsion, emlash va narxlarni taklif qiladi */
 export function SetupPage() {
   const f = useFarm()
-  const { t, lt, money, settings, update, farmId } = useSettings()
+  const { t, lt, update, farmId } = useSettings()
   const { toast } = useUi()
   const nav = useNavigate()
 
@@ -86,14 +84,9 @@ export function SetupPage() {
         push({ id: `health:${sp.id}:${h.key}`, kind: 'health', title, type: h.type, date: addDays(today(), h.inDays), species: sp })
       }
     }
-    for (const sp of species) {
-      if (settings.marketPrices[sp.id]?.perKg || settings.marketPrices[sp.id]?.perHead) continue
-      const perKg = SPECIES_SEED.find((x) => 'sp_' + x.key === sp.id)?.perKg
-      if (perKg) push({ id: 'price:' + sp.id, kind: 'price', species: sp, perKg })
-    }
     return out
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [picked, f.catMap, f.feedItems, f.rations, f.reminders, settings.marketPrices, lt])
+  }, [picked, f.catMap, f.feedItems, f.rations, f.reminders, lt])
 
   const selected = items.filter((i) => !off.has(i.id))
   const toggle = (id: string) => {
@@ -117,14 +110,13 @@ export function SetupPage() {
     setBusy(true)
     try {
       const now = Date.now()
-      const prices = { ...settings.marketPrices }
       await db.transaction('rw', [db.categories, db.feedItems, db.rations, db.reminders], async () => {
         const feedIds = new Map<string, string>()
         const ensureFeed = async (fd: TplFeed) => {
           const existing = feedIds.get(fd.key) ?? findFeed(fd)
           if (existing) return existing
           const id = uid()
-          await db.feedItems.add({ id, farmId, name: lt(fd.name), unit: fd.unit, stock: 0, avgPrice: fd.price, createdAt: now })
+          await db.feedItems.add({ id, farmId, name: lt(fd.name), unit: fd.unit, stock: 0, avgPrice: 0, createdAt: now })
           feedIds.set(fd.key, id)
           return id
         }
@@ -137,10 +129,9 @@ export function SetupPage() {
             await db.rations.add({ id: uid(), farmId, feedItemId: fid, scope: 'species', targetId: it.species.id, perHeadDay: it.feed.perHeadDay! })
           } else if (it.kind === 'health')
             await db.reminders.add({ id: uid(), farmId, date: it.date, title: it.title, note: t('Avtomatik sozlashdan (taxminiy sana)', 'Из автонастройки (примерная дата)'), done: false, createdAt: now })
-          else if (it.kind === 'price') prices[it.species.id] = { ...prices[it.species.id], perKg: it.perKg }
         }
       })
-      await update({ marketPrices: prices, setupDone: true })
+      await update({ setupDone: true })
       toast(t(`${selected.length} ta narsa qo'shildi`, `Добавлено: ${selected.length}`))
       setOff(new Set())
     } finally {
@@ -151,10 +142,9 @@ export function SetupPage() {
   const groups: { key: Item['kind'] | 'income'; title: string; icon: ReactNode; list: Item[] }[] = [
     { key: 'category', title: t('Xarajat turlari', 'Статьи расходов'), icon: <IconTile icon={Tags} color="#dc2626" size="sm" />, list: items.filter((i) => i.kind === 'category' && i.type === 'expense') },
     { key: 'income', title: t('Daromad turlari', 'Статьи доходов'), icon: <IconTile icon={Tags} color="#16a34a" size="sm" />, list: items.filter((i) => i.kind === 'category' && i.type === 'income') },
-    { key: 'feed', title: t('Yem omboriga (taxminiy narx)', 'Корма на склад (примерная цена)'), icon: <IconTile icon={Wheat} color="#a16207" size="sm" />, list: items.filter((i) => i.kind === 'feed') },
+    { key: 'feed', title: t('Yem omboriga', 'Корма на склад'), icon: <IconTile icon={Wheat} color="#a16207" size="sm" />, list: items.filter((i) => i.kind === 'feed') },
     { key: 'ration', title: t('Kunlik ratsion (1 bosh)', 'Суточный рацион (1 гол.)'), icon: <IconTile icon={Wheat} color="#65a30d" size="sm" />, list: items.filter((i) => i.kind === 'ration') },
     { key: 'health', title: t('Emlash va ishlov eslatmalari', 'Напоминания о вакцинации и обработке'), icon: <IconTile icon={Bell} color="#ea580c" size="sm" />, list: items.filter((i) => i.kind === 'health') },
-    { key: 'price', title: t('Bozor narxlari (1 kg tirik vazn)', 'Рыночные цены (1 кг живого веса)'), icon: <IconTile icon={TrendingUp} color="#2563eb" size="sm" />, list: items.filter((i) => i.kind === 'price') },
   ]
 
   const label = (it: Item): { title: ReactNode; sub?: ReactNode } => {
@@ -171,13 +161,11 @@ export function SetupPage() {
           sub: it.species ? lt(it.species.name) : t('Umumiy', 'Общее'),
         }
       case 'feed':
-        return { title: nm(it.feed.name), sub: `≈ ${money(it.feed.price)} / ${it.feed.unit}` }
+        return { title: nm(it.feed.name), sub: t(`O'lchov: ${it.feed.unit} · narx birinchi xariddan olinadi`, `Ед.: ${it.feed.unit} · цена — из первой покупки`) }
       case 'ration':
         return { title: `${lt(it.species.name)}: ${nm(it.feed.name)}`, sub: `${formatNum(it.feed.perHeadDay!, 2)} ${it.feed.unit} / ${t('kun', 'день')}` }
       case 'health':
         return { title: it.title, sub: `${t('Eslatma', 'Напоминание')}: ${formatDate(it.date)}` }
-      case 'price':
-        return { title: lt(it.species.name), sub: `≈ ${money(it.perKg)} / kg` }
     }
   }
 
@@ -185,8 +173,8 @@ export function SetupPage() {
     <Page back title={t('Avtomatik sozlash', 'Автонастройка')}>
       <Callout tone="info" icon={<Wand2 size={18} />}>
         {t(
-          "Boqadigan hayvonlaringizni tanlang — ularga mos xarajat va daromad turlari, yem ro'yxati (taxminiy narx bilan), kunlik ratsion, emlash eslatmalari va bozor narxlari taklif qilinadi. Keraksizini belgidan olib tashlang. Hammasini keyin o'zgartirish mumkin.",
-          'Выберите своих животных — предложим подходящие статьи расходов и доходов, корма (с примерной ценой), рацион, напоминания о вакцинации и рыночные цены. Снимите галочку с ненужного. Всё можно изменить потом.',
+          "Boqadigan hayvonlaringizni tanlang — ularga mos xarajat va daromad turlari, yem ro'yxati, kunlik ratsion va emlash eslatmalari taklif qilinadi. Narxlar qo'shilmaydi — ular o'zingizning xaridlaringizdan olinadi. Keraksizini belgidan olib tashlang. Hammasini keyin o'zgartirish mumkin.",
+          'Выберите своих животных — предложим подходящие статьи расходов и доходов, корма, рацион и напоминания о вакцинации. Цены не добавляются — они берутся из ваших покупок. Снимите галочку с ненужного. Всё можно изменить потом.',
         )}
       </Callout>
 

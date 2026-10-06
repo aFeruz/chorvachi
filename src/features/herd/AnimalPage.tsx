@@ -25,7 +25,7 @@ import type { AnimalStatus } from '../../db/types'
 export function AnimalPage() {
   const { id = '' } = useParams()
   const f = useFarm()
-  const { t, lt, money, settings } = useSettings()
+  const { t, lt, money } = useSettings()
   const { confirm, toast } = useUi()
   const nav = useNavigate()
   const a = f.animalMap.get(id)
@@ -60,7 +60,7 @@ export function AnimalPage() {
   const be = breakEven({ cost: cost.total, weightKg: w, dressingPct: sp?.dressingPct, targetMarginPct: margin ?? 0 })
   const value = f.valueOfAnimal(a)
   const g = adg(weights)
-  const marketKg = settings.marketPrices[a.speciesId]?.perKg
+  const marketKg = f.marketPerKg(a.speciesId)
   const hold = g !== undefined && marketKg ? holdOrSell({ adgKg: g, dailyCost: daily, pricePerKgLive: marketKg }) : undefined
   const sale_ = a.saleIncomeId ? f.incomes.find((i) => i.id === a.saleIncomeId) : undefined
   const saleShare = sale_ ? sale_.amount / Math.max(1, sale_.animalIds?.length ?? 1) : 0

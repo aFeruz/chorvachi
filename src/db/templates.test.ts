@@ -25,11 +25,8 @@ describe('templates', () => {
     }
   })
 
-  it("yem narxlari va me'yorlari musbat", () => {
+  it("ratsion me'yorlari musbat", () => {
     for (const t of Object.values(TEMPLATES))
-      for (const f of t.feeds) {
-        expect(f.price).toBeGreaterThan(0)
-        if (f.perHeadDay !== undefined) expect(f.perHeadDay).toBeGreaterThan(0)
-      }
+      for (const f of t.feeds) if (f.perHeadDay !== undefined) expect(f.perHeadDay).toBeGreaterThan(0)
   })
 })

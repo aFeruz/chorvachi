@@ -3,6 +3,8 @@ import { useFarm } from '../../state/farm'
 import { useSettings } from '../../state/settings'
 import { Button, Callout, cx, DateInput, Field, KV, Money, NumInput, Segmented, Sheet, Textarea, useUi } from '../../components/ui'
 import { recordSale } from '../../db/repo'
+import { PriceHint } from '../../components/PriceHint'
+import { priceHistory, priceStats } from '../../lib/calc/priceHistory'
 import { saleResult } from '../../lib/calc/pricing'
 import { today } from '../../lib/dates'
 import { formatNum, pct } from '../../lib/money'
@@ -45,6 +47,19 @@ export function SaleSheet({ animalIds, groupId, onClose }: { animalIds?: ID[]; g
   const [date, setDate] = useState(today())
   const [note, setNote] = useState('')
   const [busy, setBusy] = useState(false)
+
+  // Shu turdagi oldingi sotuvlar: 1 kg narxi (tirik yoki go'sht)
+  const priceInfo = useMemo(() => {
+    const cat = mode === 'meat' ? 'in_meat_sale' : 'in_animal_sale'
+    const points = f.incomes
+      .filter((i) => i.categoryId === cat && i.weightKg && i.weightKg > 0)
+      .filter((i) => {
+        const sid = i.animalIds?.length ? f.animalMap.get(i.animalIds[0])?.speciesId : f.groupMap.get(i.targetId ?? '')?.speciesId
+        return sid === speciesId
+      })
+      .map((i) => ({ id: i.id, date: i.date, createdAt: i.createdAt, categoryId: cat, amount: i.amount, qty: i.weightKg, unit: 'kg' }))
+    return priceStats(priceHistory(points, { categoryId: cat }))
+  }, [f.incomes, f.animalMap, f.groupMap, speciesId, mode])
 
   const meatKg = (weight ?? 0) * ((dressing ?? 0) / 100)
   const saleKg = mode === 'meat' ? meatKg : weight ?? 0
@@ -125,6 +140,15 @@ export function SaleSheet({ animalIds, groupId, onClose }: { animalIds?: ID[]; g
             </>
           )}
         </div>
+      )}
+      {mode !== 'head' && priceInfo && (
+        <PriceHint
+          stats={priceInfo}
+          kind="income"
+          currentUnitPrice={pricePerKg}
+          currentUnit="kg"
+          onApply={() => setPricePerKg(Math.round(priceInfo.last.unitPrice ?? 0))}
+        />
       )}
       {mode === 'head' && (
         <Field label={t('Umumiy sotish narxi', 'Общая сумма продажи')}>

@@ -7,11 +7,11 @@ import { formatNum, pct } from '../../lib/money'
 /** Mustaqil kalkulyator: sotib olish → boqish → sotish */
 export function SaleCalc() {
   const f = useFarm()
-  const { t, lt, money, settings } = useSettings()
+  const { t, lt, money } = useSettings()
   const indiv = f.species.filter((s) => s.enabled && s.dressingPct > 0)
   const [speciesId, setSpeciesId] = useState(indiv[0]?.id ?? 'sp_sheep')
   const sp = f.speciesMap.get(speciesId)
-  const market = settings.marketPrices[speciesId]?.perKg
+  const market = f.marketPerKg(speciesId)
 
   const [heads, setHeads] = useState<number | undefined>(10)
   const [buyPrice, setBuyPrice] = useState<number | undefined>(2_000_000)
@@ -22,7 +22,7 @@ export function SaleCalc() {
   const [vet, setVet] = useState<number | undefined>(30_000)
   const [other, setOther] = useState<number | undefined>(1_000_000)
   const [mortality, setMortality] = useState<number | undefined>(2)
-  const [price, setPrice] = useState<number | undefined>(market ?? 55_000)
+  const [price, setPrice] = useState<number | undefined>(market)
   const [dressing, setDressing] = useState<number | undefined>(sp?.dressingPct)
 
   const n = heads ?? 0
@@ -51,7 +51,7 @@ export function SaleCalc() {
             setSpeciesId(e.target.value)
             const s = f.speciesMap.get(e.target.value)
             setDressing(s?.dressingPct)
-            const m = settings.marketPrices[e.target.value]?.perKg
+            const m = f.marketPerKg(e.target.value)
             if (m) setPrice(m)
           }}
           options={indiv.map((s) => ({ value: s.id, label: lt(s.name) }))}

@@ -1,20 +1,20 @@
 import type { Category, Species } from './types'
 
-type SpeciesSeed = Omit<Species, 'id' | 'builtin' | 'enabled'> & { key: string; perKg?: number }
+type SpeciesSeed = Omit<Species, 'id' | 'builtin' | 'enabled'> & { key: string }
 
 /** Standart turlar. Qiymatlar o'rtacha, foydalanuvchi sozlamalarda o'zgartira oladi. */
 export const SPECIES_SEED: SpeciesSeed[] = [
-  { key: 'sheep', name: { uz: "Qo'y", ru: 'Овца' }, mode: 'individual', gestationDays: 150, avgLitter: 1.3, maturityMonths: 8, dressingPct: 48, lu: 0.15, perKg: 55000 },
-  { key: 'goat', name: { uz: 'Echki', ru: 'Коза' }, mode: 'individual', gestationDays: 150, avgLitter: 1.6, maturityMonths: 8, dressingPct: 45, lu: 0.15, perKg: 45000 },
-  { key: 'cattle', name: { uz: 'Qoramol', ru: 'КРС' }, mode: 'individual', gestationDays: 283, avgLitter: 1, maturityMonths: 15, dressingPct: 55, lu: 1, perKg: 42000 },
-  { key: 'horse', name: { uz: 'Ot', ru: 'Лошадь' }, mode: 'individual', gestationDays: 340, avgLitter: 1, maturityMonths: 24, dressingPct: 55, lu: 0.8, perKg: 40000 },
-  { key: 'camel', name: { uz: 'Tuya', ru: 'Верблюд' }, mode: 'individual', gestationDays: 390, avgLitter: 1, maturityMonths: 36, dressingPct: 55, lu: 1.1, perKg: 38000 },
-  { key: 'rabbit', name: { uz: 'Quyon', ru: 'Кролик' }, mode: 'group', gestationDays: 31, avgLitter: 7, maturityMonths: 5, dressingPct: 55, lu: 0.02, perKg: 35000 },
-  { key: 'broiler', name: { uz: 'Broyler tovuq', ru: 'Бройлер' }, mode: 'group', gestationDays: 0, avgLitter: 0, maturityMonths: 2, dressingPct: 72, lu: 0.01, perKg: 24000 },
-  { key: 'layer', name: { uz: 'Tuxum tovuq', ru: 'Несушка' }, mode: 'group', gestationDays: 0, avgLitter: 0, maturityMonths: 5, dressingPct: 65, lu: 0.01, perKg: 20000 },
-  { key: 'turkey', name: { uz: 'Kurka', ru: 'Индейка' }, mode: 'group', gestationDays: 0, avgLitter: 0, maturityMonths: 5, dressingPct: 75, lu: 0.03, perKg: 40000 },
-  { key: 'duck', name: { uz: "O'rdak / g'oz", ru: 'Утка / гусь' }, mode: 'group', gestationDays: 0, avgLitter: 0, maturityMonths: 3, dressingPct: 70, lu: 0.02, perKg: 32000 },
-  { key: 'fish', name: { uz: 'Baliq', ru: 'Рыба' }, mode: 'group', gestationDays: 0, avgLitter: 0, maturityMonths: 12, dressingPct: 80, lu: 0.001, perKg: 30000 },
+  { key: 'sheep', name: { uz: "Qo'y", ru: 'Овца' }, mode: 'individual', gestationDays: 150, avgLitter: 1.3, maturityMonths: 8, dressingPct: 48, lu: 0.15 },
+  { key: 'goat', name: { uz: 'Echki', ru: 'Коза' }, mode: 'individual', gestationDays: 150, avgLitter: 1.6, maturityMonths: 8, dressingPct: 45, lu: 0.15 },
+  { key: 'cattle', name: { uz: 'Qoramol', ru: 'КРС' }, mode: 'individual', gestationDays: 283, avgLitter: 1, maturityMonths: 15, dressingPct: 55, lu: 1 },
+  { key: 'horse', name: { uz: 'Ot', ru: 'Лошадь' }, mode: 'individual', gestationDays: 340, avgLitter: 1, maturityMonths: 24, dressingPct: 55, lu: 0.8 },
+  { key: 'camel', name: { uz: 'Tuya', ru: 'Верблюд' }, mode: 'individual', gestationDays: 390, avgLitter: 1, maturityMonths: 36, dressingPct: 55, lu: 1.1 },
+  { key: 'rabbit', name: { uz: 'Quyon', ru: 'Кролик' }, mode: 'group', gestationDays: 31, avgLitter: 7, maturityMonths: 5, dressingPct: 55, lu: 0.02 },
+  { key: 'broiler', name: { uz: 'Broyler tovuq', ru: 'Бройлер' }, mode: 'group', gestationDays: 0, avgLitter: 0, maturityMonths: 2, dressingPct: 72, lu: 0.01 },
+  { key: 'layer', name: { uz: 'Tuxum tovuq', ru: 'Несушка' }, mode: 'group', gestationDays: 0, avgLitter: 0, maturityMonths: 5, dressingPct: 65, lu: 0.01 },
+  { key: 'turkey', name: { uz: 'Kurka', ru: 'Индейка' }, mode: 'group', gestationDays: 0, avgLitter: 0, maturityMonths: 5, dressingPct: 75, lu: 0.03 },
+  { key: 'duck', name: { uz: "O'rdak / g'oz", ru: 'Утка / гусь' }, mode: 'group', gestationDays: 0, avgLitter: 0, maturityMonths: 3, dressingPct: 70, lu: 0.02 },
+  { key: 'fish', name: { uz: 'Baliq', ru: 'Рыба' }, mode: 'group', gestationDays: 0, avgLitter: 0, maturityMonths: 12, dressingPct: 80, lu: 0.001 },
   { key: 'bee', name: { uz: 'Asalari (oila)', ru: 'Пчёлы (семья)' }, mode: 'group', gestationDays: 0, avgLitter: 0, maturityMonths: 0, dressingPct: 0, lu: 0.02 },
 ]
 

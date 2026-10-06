@@ -3,7 +3,8 @@ import type { HealthType, LText } from './types'
 /**
  * Tur bo'yicha tayyor shablonlar: "Avtomatik sozlash" sahifasi foydalanuvchi tanlagan
  * turlar uchun shulardan kategoriya, yem, ratsion va emlash eslatmalarini taklif qiladi.
- * Narxlar va me'yorlar taxminiy — foydalanuvchi keyin o'zgartiradi.
+ * Narx berilmaydi: narx foydalanuvchining o'z xaridlari tarixidan olinadi.
+ * Ratsion me'yorlari taxminiy — foydalanuvchi keyin o'zgartiradi.
  */
 
 export interface TplCategory {
@@ -16,7 +17,6 @@ export interface TplFeed {
   key: string
   name: LText
   unit: string
-  price: number // 1 birlik uchun taxminiy narx, so'm
   perHeadDay?: number // 1 bosh uchun kunlik taxminiy me'yor
 }
 
@@ -37,16 +37,16 @@ export interface SpeciesTemplate {
 const L = (uz: string, ru: string): LText => ({ uz, ru })
 
 // Bir nechta turda takrorlanadigan yemlar
-const HAY: TplFeed = { key: 'hay', name: L('Beda pichani', 'Сено люцерны'), unit: 'kg', price: 2_000 }
-const STRAW: TplFeed = { key: 'straw', name: L('Somon', 'Солома'), unit: 'kg', price: 800 }
-const BARLEY: TplFeed = { key: 'barley', name: L('Arpa', 'Ячмень'), unit: 'kg', price: 3_500 }
-const CORN: TplFeed = { key: 'corn', name: L("Makkajo'xori doni", 'Кукуруза (зерно)'), unit: 'kg', price: 3_800 }
-const BRAN: TplFeed = { key: 'bran', name: L('Kepak', 'Отруби'), unit: 'kg', price: 2_500 }
-const SALT: TplFeed = { key: 'salt', name: L("Tuz (yalama)", 'Соль-лизунец'), unit: 'kg', price: 2_000 }
-const SILAGE: TplFeed = { key: 'silage', name: L('Silos', 'Силос'), unit: 'kg', price: 600 }
-const CATTLE_MIX: TplFeed = { key: 'cattle_mix', name: L('Omuxta yem (qoramol)', 'Комбикорм для КРС'), unit: 'kg', price: 4_500 }
-const OILCAKE: TplFeed = { key: 'oilcake', name: L('Kunjara / shrot', 'Жмых / шрот'), unit: 'kg', price: 4_000 }
-const POULTRY_MIX: TplFeed = { key: 'poultry_mix', name: L('Parranda omuxta yemi', 'Комбикорм для птицы'), unit: 'kg', price: 6_000 }
+const HAY: TplFeed = { key: 'hay', name: L('Beda pichani', 'Сено люцерны'), unit: 'kg' }
+const STRAW: TplFeed = { key: 'straw', name: L('Somon', 'Солома'), unit: 'kg' }
+const BARLEY: TplFeed = { key: 'barley', name: L('Arpa', 'Ячмень'), unit: 'kg' }
+const CORN: TplFeed = { key: 'corn', name: L("Makkajo'xori doni", 'Кукуруза (зерно)'), unit: 'kg' }
+const BRAN: TplFeed = { key: 'bran', name: L('Kepak', 'Отруби'), unit: 'kg' }
+const SALT: TplFeed = { key: 'salt', name: L("Tuz (yalama)", 'Соль-лизунец'), unit: 'kg' }
+const SILAGE: TplFeed = { key: 'silage', name: L('Silos', 'Силос'), unit: 'kg' }
+const CATTLE_MIX: TplFeed = { key: 'cattle_mix', name: L('Omuxta yem (qoramol)', 'Комбикорм для КРС'), unit: 'kg' }
+const OILCAKE: TplFeed = { key: 'oilcake', name: L('Kunjara / shrot', 'Жмых / шрот'), unit: 'kg' }
+const POULTRY_MIX: TplFeed = { key: 'poultry_mix', name: L('Parranda omuxta yemi', 'Комбикорм для птицы'), unit: 'kg' }
 
 const f = (base: TplFeed, perHeadDay?: number): TplFeed => ({ ...base, perHeadDay })
 
@@ -140,7 +140,7 @@ export const TEMPLATES: Record<string, SpeciesTemplate> = {
       { key: 'rabbit_breed', name: L('Nasl quyon sotish', 'Продажа племенных кроликов'), color: '#16a34a' },
     ],
     feeds: [
-      f({ key: 'rabbit_pellet', name: L('Quyon granula yemi', 'Гранулы для кроликов'), unit: 'kg', price: 5_000 }, 0.15),
+      f({ key: 'rabbit_pellet', name: L('Quyon granula yemi', 'Гранулы для кроликов'), unit: 'kg' }, 0.15),
       f(HAY, 0.1),
     ],
     health: [
@@ -157,8 +157,8 @@ export const TEMPLATES: Record<string, SpeciesTemplate> = {
     ],
     income: [{ key: 'chicken_meat', name: L("Tovuq go'shti", 'Мясо птицы'), color: '#b91c1c' }],
     feeds: [
-      f({ key: 'broiler_start', name: L('Broyler start yemi', 'Бройлер старт'), unit: 'kg', price: 7_500 }, 0.05),
-      f({ key: 'broiler_grow', name: L("Broyler o'sish yemi", 'Бройлер рост'), unit: 'kg', price: 6_800 }, 0.12),
+      f({ key: 'broiler_start', name: L('Broyler start yemi', 'Бройлер старт'), unit: 'kg' }, 0.05),
+      f({ key: 'broiler_grow', name: L("Broyler o'sish yemi", 'Бройлер рост'), unit: 'kg' }, 0.12),
     ],
     health: [
       { key: 'nd', type: 'vaccine', title: L('Nyukaslga qarshi emlash (7-kun)', 'Вакцинация от Ньюкасла (7 день)'), inDays: 7 },
@@ -173,7 +173,7 @@ export const TEMPLATES: Record<string, SpeciesTemplate> = {
       { key: 'lighting', name: L('Yoritish', 'Освещение'), color: '#eab308' },
     ],
     income: [{ key: 'spent_hens', name: L('Yaroqsiz tovuqlarni sotish', 'Продажа выбракованных кур'), color: '#b91c1c' }],
-    feeds: [f({ key: 'layer_feed', name: L('Tuxum tovuq yemi', 'Корм для несушек'), unit: 'kg', price: 5_500 }, 0.12)],
+    feeds: [f({ key: 'layer_feed', name: L('Tuxum tovuq yemi', 'Корм для несушек'), unit: 'kg' }, 0.12)],
     health: [
       { key: 'nd', type: 'vaccine', title: L('Nyukaslga qarshi emlash', 'Вакцинация от Ньюкасла'), inDays: 14 },
       { key: 'ib', type: 'vaccine', title: L('Bronxitga qarshi emlash', 'Вакцинация от бронхита'), inDays: 28 },
@@ -207,7 +207,7 @@ export const TEMPLATES: Record<string, SpeciesTemplate> = {
       { key: 'fish_sale', name: L('Baliq sotish', 'Продажа рыбы'), color: '#16a34a' },
       { key: 'fingerling_sale', name: L('Chavaq sotish', 'Продажа мальков'), color: '#15803d' },
     ],
-    feeds: [f({ key: 'fish_feed', name: L('Baliq yemi', 'Корм для рыбы'), unit: 'kg', price: 9_000 }, 0.02)],
+    feeds: [f({ key: 'fish_feed', name: L('Baliq yemi', 'Корм для рыбы'), unit: 'kg' }, 0.02)],
     health: [{ key: 'pond_disinfect', type: 'other', title: L('Hovuzni dezinfeksiya qilish', 'Дезинфекция пруда'), inDays: 30 }],
   },
   bee: {
@@ -223,7 +223,7 @@ export const TEMPLATES: Record<string, SpeciesTemplate> = {
       { key: 'propolis', name: L('Propolis', 'Прополис'), color: '#92400e' },
       { key: 'colony_sale', name: L('Asalari oilasi sotish', 'Продажа пчелосемей'), color: '#16a34a' },
     ],
-    feeds: [{ key: 'bee_sugar', name: L('Shakar (oziqlantirish uchun)', 'Сахар для подкормки'), unit: 'kg', price: 14_000 }],
+    feeds: [{ key: 'bee_sugar', name: L('Shakar (oziqlantirish uchun)', 'Сахар для подкормки'), unit: 'kg' }],
     health: [
       { key: 'varroa', type: 'treatment', title: L('Varroatozga qarshi ishlov', 'Обработка от варроатоза'), inDays: 30 },
       { key: 'winter', type: 'checkup', title: L("Qishlashga tayyorlash ko'rigi", 'Осмотр перед зимовкой'), inDays: 60 },

@@ -68,7 +68,7 @@ export function FeedPage() {
                 onClick={() => setItemId(x.id)}
                 left={<IconTile icon={Wheat} color="#a16207" />}
                 title={x.name}
-                sub={`${t('narx', 'цена')}: ${money(x.avgPrice)}/${x.unit}${dailyFeedUse(f, x.id) ? ` · ${formatNum(dailyFeedUse(f, x.id))} ${x.unit}/${t('kun', 'день')}` : ''}`}
+                sub={`${t('narx', 'цена')}: ${x.avgPrice ? money(x.avgPrice) + '/' + x.unit : t('hali xarid yo\'q', 'покупок ещё нет')}${dailyFeedUse(f, x.id) ? ` · ${formatNum(dailyFeedUse(f, x.id))} ${x.unit}/${t('kun', 'день')}` : ''}`}
                 right={
                   <div>
                     <div className="font-semibold tabular-nums">{formatNum(x.stock)} {x.unit}</div>

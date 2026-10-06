@@ -49,7 +49,7 @@ export class ChorvaDB extends Dexie {
     })
     this.on('populate', (tx) => {
       tx.table('species').bulkAdd(
-        SPECIES_SEED.map(({ perKg: _p, ...s }) => ({ ...s, id: 'sp_' + s.key, builtin: true, enabled: true })),
+        SPECIES_SEED.map((s) => ({ ...s, id: 'sp_' + s.key, builtin: true, enabled: true })),
       )
       tx.table('categories').bulkAdd(
         [...EXPENSE_CATEGORIES, ...INCOME_CATEGORIES].map((c) => ({
@@ -78,6 +78,3 @@ export function uid(): string {
   if (typeof crypto !== 'undefined' && 'randomUUID' in crypto) return crypto.randomUUID()
   return Date.now().toString(36) + Math.random().toString(36).slice(2)
 }
-
-export const defaultMarketPrices = (): Record<string, { perKg?: number }> =>
-  Object.fromEntries(SPECIES_SEED.filter((s) => s.perKg).map((s) => ['sp_' + s.key, { perKg: s.perKg }]))

@@ -77,9 +77,17 @@ Chorvador ko'pincha "shu qo'yni necha pulga sotsam foyda qilaman?" degan savolga
 - Bo'rdoqi kalkulyatori, yem kalkulyatori, tug'ish sanasi kalkulyatori
 
 ### Avtomatik sozlash
-- Boqadigan hayvonlaringizni tanlaysiz — ilova ularga mos **xarajat va daromad turlarini**, **yem ro'yxatini taxminiy narxlari bilan**, **kunlik ratsionni**, **emlash eslatmalarini** va **bozor narxlarini** taklif qiladi
+- Boqadigan hayvonlaringizni tanlaysiz — ilova ularga mos **xarajat va daromad turlarini**, **yem ro'yxatini**, **kunlik ratsionni** va **emlash eslatmalarini** taklif qiladi
+- Narxlar o'ylab topilmaydi — ular faqat sizning o'z xaridlaringizdan olinadi
 - Har bir taklifni belgidan olib tashlash mumkin; hech narsa siz tugmani bosmaguningizcha qo'shilmaydi
 - Takror bosilsa, faqat yangi takliflar ko'rsatiladi — hech narsa ikki marta qo'shilmaydi
+
+### Narx tarixi
+- Xarajat yoki daromad qayta yozilganda o'sha turdagi **oxirgi haqiqiy narxingiz** ko'rsatiladi (masalan: beda — 35 000 so'm / qop)
+- Narx avtomatik yozilmaydi: "Qo'llash" tugmasi bilan bir bosishda qo'yasiz yoki yangi narxni kiritasiz
+- Yangi narx oldingisidan qancha **qimmat yoki arzon** ekani foizda ko'rsatiladi; oxirgi xaridlar oralig'i va o'rtacha narx ham ko'rinadi
+- Yem tanlansa, aynan o'sha yemning narxi; hayvon sotishda — shu turdagi oxirgi sotuvning 1 kg narxi
+- Poda qiymati uchun bozor narxi kiritilmagan bo'lsa, shu turdagi oxirgi sotuvingiz narxi olinadi
 
 ### Boshqa
 - Telefonga eslatmalar (Android bildirishnomalari)

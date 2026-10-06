@@ -1,8 +1,8 @@
-import { db, defaultMarketPrices, FARM_TABLES, TABLES, uid } from './db'
+import { db, FARM_TABLES, TABLES, uid } from './db'
 import type {
   Animal, AnimalStatus, Expense, HealthEvent, ID, Income, MovementType, Sex,
 } from './types'
-import { loadSettings, saveSettings } from '../state/settings'
+import { saveSettings } from '../state/settings'
 import { addDays, today } from '../lib/dates'
 
 const now = () => Date.now()
@@ -12,11 +12,7 @@ const now = () => Date.now()
 export async function createFarm(name: string, address?: string): Promise<ID> {
   const id = uid()
   await db.farms.add({ id, name, address, createdAt: now() })
-  const s = await loadSettings()
-  await saveSettings({
-    activeFarmId: id,
-    marketPrices: Object.keys(s.marketPrices).length ? s.marketPrices : defaultMarketPrices(),
-  })
+  await saveSettings({ activeFarmId: id })
   return id
 }
 
