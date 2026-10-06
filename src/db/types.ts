@@ -259,6 +259,8 @@ export interface Settings {
   /** tur bo'yicha joriy bozor narxi: 1 kg tirik vazn va 1 bosh */
   marketPrices: Record<ID, { perKg?: number; perHead?: number }>
   notifications: boolean
+  /** "Avtomatik sozlash" ishlatilgan yoki taklif yopilgan */
+  setupDone?: boolean
 }
 
 export const DEFAULT_SETTINGS: Settings = {

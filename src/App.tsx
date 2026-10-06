@@ -31,6 +31,7 @@ import { SpeciesPage } from './features/more/SpeciesPage'
 import { CategoriesPage } from './features/more/CategoriesPage'
 import { FarmsPage } from './features/more/FarmsPage'
 import { AboutPage } from './features/more/AboutPage'
+import { SetupPage } from './features/more/SetupPage'
 import { useNativeIntegration } from './lib/native'
 
 // Diagrammali og'ir sahifalar alohida yuklanadi
@@ -101,6 +102,7 @@ function Gate() {
             <Route path="/categories" element={<CategoriesPage />} />
             <Route path="/farms" element={<FarmsPage />} />
             <Route path="/about" element={<AboutPage />} />
+            <Route path="/setup" element={<SetupPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>

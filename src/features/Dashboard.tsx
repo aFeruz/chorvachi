@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Baby, Bell, Calculator, ChevronRight, Minus, PawPrint, Plus, TrendingDown, TrendingUp } from 'lucide-react'
+import { Baby, Bell, Calculator, ChevronRight, Minus, PawPrint, Plus, TrendingDown, TrendingUp, Wand2, X } from 'lucide-react'
 import { useFarm } from '../state/farm'
 import { useSettings } from '../state/settings'
 import { Badge, Card, Chips, cx, IconButton, List, ListRow, Money, Page, Section, Stat } from '../components/ui'
@@ -14,7 +14,7 @@ type Period = 'month' | 'year' | 'all'
 
 export function Dashboard() {
   const f = useFarm()
-  const { t, lt, short, settings } = useSettings()
+  const { t, lt, short, settings, update } = useSettings()
   const nav = useNavigate()
   const [period, setPeriod] = useState<Period>('month')
 
@@ -56,6 +56,19 @@ export function Dashboard() {
         </IconButton>
       }
     >
+      {!settings.setupDone && (
+        <Card className="mb-3 flex items-center gap-3 border-brand-200 dark:border-brand-900">
+          <IconTile icon={Wand2} color="#027a48" />
+          <button className="min-w-0 flex-1 text-left" onClick={() => nav('/setup')}>
+            <div className="font-semibold">{t('Avtomatik sozlash', 'Автонастройка')}</div>
+            <div className="text-sm text-stone-500">{t("Xarajat turlari, yem, ratsion va emlashni bir bosishda to'ldiring", 'Статьи расходов, корма, рацион и вакцинация в один клик')}</div>
+          </button>
+          <IconButton aria-label="close" onClick={() => update({ setupDone: true })}>
+            <X size={18} className="text-stone-400" />
+          </IconButton>
+        </Card>
+      )}
+
       <Chips
         value={period}
         onChange={setPeriod}

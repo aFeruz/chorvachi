@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Minus, Plus, ShoppingCart, Trash2, Wheat } from 'lucide-react'
+import { Minus, Plus, ShoppingCart, Trash2, Wand2, Wheat } from 'lucide-react'
 import { IconTile } from '../../components/icons'
 import { useFarm } from '../../state/farm'
 import { useSettings } from '../../state/settings'
@@ -51,7 +51,12 @@ export function FeedPage() {
           icon={<Wheat size={30} />}
           title={t("Ombor bo'sh", 'Склад пуст')}
           text={t("Yem turlarini qo'shing (pichan, arpa, omuxta...). Kunlik ratsion kiritsangiz, yem necha kunga yetishini ko'rsatamiz.", 'Добавьте корма (сено, ячмень, комбикорм...). Укажите рацион — покажем, на сколько дней хватит.')}
-          action={<Button onClick={() => setNewOpen(true)} icon={<Plus size={18} />}>{t("Yem qo'shish", 'Добавить корм')}</Button>}
+          action={
+            <div className="flex flex-col gap-2">
+              <Button onClick={() => nav('/setup')} icon={<Wand2 size={18} />}>{t('Avtomatik to\'ldirish', 'Заполнить автоматически')}</Button>
+              <Button variant="secondary" onClick={() => setNewOpen(true)} icon={<Plus size={18} />}>{t("Qo'lda qo'shish", 'Добавить вручную')}</Button>
+            </div>
+          }
         />
       ) : (
         <List>

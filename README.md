@@ -15,6 +15,7 @@ Har bir hayvonning tannarxi, zararsiz sotish narxi va sof foydani avtomatik hiso
 ![React](https://img.shields.io/badge/React-19-61dafb)
 ![TypeScript](https://img.shields.io/badge/TypeScript-6-3178c6)
 ![Capacitor](https://img.shields.io/badge/Capacitor-8-119eff)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 [**APK yuklab olish**](https://github.com/aFeruz/chorvachi/releases/latest) · [Imkoniyatlar](#imkoniyatlar) · [Ishga tushirish](#kompyuterda-ishga-tushirish) · [Android](#android-apk)
 
@@ -74,6 +75,11 @@ Chorvador ko'pincha "shu qo'yni necha pulga sotsam foyda qilaman?" degan savolga
 - **Excel eksport**
 - **Biznes-reja simulyatori**: poda ko'payishi, oyma-oy pul oqimi, 3 ssenariy (yomon / o'rtacha / yaxshi), o'zini qoplash muddati
 - Bo'rdoqi kalkulyatori, yem kalkulyatori, tug'ish sanasi kalkulyatori
+
+### Avtomatik sozlash
+- Boqadigan hayvonlaringizni tanlaysiz — ilova ularga mos **xarajat va daromad turlarini**, **yem ro'yxatini taxminiy narxlari bilan**, **kunlik ratsionni**, **emlash eslatmalarini** va **bozor narxlarini** taklif qiladi
+- Har bir taklifni belgidan olib tashlash mumkin; hech narsa siz tugmani bosmaguningizcha qo'shilmaydi
+- Takror bosilsa, faqat yangi takliflar ko'rsatiladi — hech narsa ikki marta qo'shilmaydi
 
 ### Boshqa
 - Telefonga eslatmalar (Android bildirishnomalari)
@@ -188,3 +194,7 @@ scripts/         ikonka va splash generatori
 ## Ma'lumotlar xavfsizligi
 
 Barcha ma'lumotlar faqat qurilmaning o'zida (IndexedDB) saqlanadi va hech qayerga yuborilmaydi. Telefon almashtirishdan oldin **Ko'proq → Zaxira va eksport** bo'limidan JSON nusxa oling.
+
+## Litsenziya
+
+[MIT](LICENSE) © 2026 aFeruz

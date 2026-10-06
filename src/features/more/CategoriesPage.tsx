@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Plus } from 'lucide-react'
+import { Plus, Wand2 } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 import { useFarm } from '../../state/farm'
 import { useSettings } from '../../state/settings'
 import { Badge, Button, Fab, Field, Input, List, ListRow, Page, Segmented, Sheet, Toggle } from '../../components/ui'
@@ -11,11 +12,12 @@ const COLORS = ['#16a34a', '#dc2626', '#2563eb', '#ca8a04', '#9333ea', '#0891b2'
 export function CategoriesPage() {
   const f = useFarm()
   const { t, lt } = useSettings()
+  const nav = useNavigate()
   const [kind, setKind] = useState<'expense' | 'income'>('expense')
   const [edit, setEdit] = useState<Category | null>(null)
   const used = (id: string) => f.expenses.some((e) => e.categoryId === id) || f.incomes.some((e) => e.categoryId === id)
   return (
-    <Page back title={t('Kategoriyalar', 'Категории')}>
+    <Page back title={t('Kategoriyalar', 'Категории')} actions={<Button size="sm" variant="soft" icon={<Wand2 size={16} />} onClick={() => nav('/setup')}>{t('Avtomatik', 'Авто')}</Button>}>
       <Segmented className="mb-3" value={kind} onChange={setKind} options={[{ value: 'expense', label: t('Xarajat', 'Расходы') }, { value: 'income', label: t('Daromad', 'Доходы') }]} />
       <List>
         {f.categories.filter((c) => c.kind === kind).map((c) => (
