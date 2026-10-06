@@ -9,7 +9,7 @@ export function CalcHub() {
   const nav = useNavigate()
   const items = [
     { to: '/calc/sale', icon: HandCoins, color: '#b45309', title: t("Bo'rdoqi va sotish kalkulyatori", 'Калькулятор откорма и продажи'), sub: t('Sotib olib, boqib, sotsam qancha foyda qilaman?', 'Купить, откормить, продать — какая прибыль?') },
-    { to: '/calc/plan', icon: TrendingUp, color: '#027a48', title: t('Biznes-reja simulyatori', 'Симулятор бизнес-плана'), sub: t("Poda ko'payishi, oyma-oy pul oqimi, o'zini qoplash muddati", 'Рост стада, денежный поток, срок окупаемости') },
+    { to: '/forecast', icon: TrendingUp, color: '#027a48', title: t('Prognoz (kelajak hisobi)', 'Прогноз (расчёт будущего)'), sub: t("Qachon ko'payadi, qachon foydaga chiqadi, xatarlar va nima kerak", 'Рост стада, окупаемость, риски и что нужно') },
     { to: '/calc/feed', icon: Wheat, color: '#a16207', title: t('Yem kalkulyatori', 'Калькулятор кормов'), sub: t('Qancha yem kerak va qancha turadi', 'Сколько нужно корма и сколько стоит') },
     { to: '/calc/gestation', icon: CalendarHeart, color: '#db2777', title: t("Tug'ish sanasi kalkulyatori", 'Калькулятор даты родов'), sub: t("Qochirilgan kundan tug'ish sanasini hisoblash", 'Дата родов по дате случки') },
   ]

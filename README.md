@@ -30,7 +30,8 @@ Har bir hayvonning tannarxi, zararsiz sotish narxi va sof foydani avtomatik hiso
 </p>
 <p align="center">
   <img src="docs/screenshots/reports.png" width="200" alt="Hisobotlar" />
-  <img src="docs/screenshots/business-plan.png" width="200" alt="Biznes-reja" />
+  <img src="docs/screenshots/forecast.png" width="200" alt="Prognoz" />
+  <img src="docs/screenshots/forecast-chart.png" width="200" alt="Prognoz grafiklari" />
   <img src="docs/screenshots/more.png" width="200" alt="Bo'limlar" />
 </p>
 
@@ -73,8 +74,32 @@ Chorvador ko'pincha "shu qo'yni necha pulga sotsam foyda qilaman?" degan savolga
 ### Hisobotlar va kalkulyatorlar
 - Foyda/zarar, oylik dinamika, xarajatlar tarkibi, poda harakati, guruhlar va sotilgan hayvonlar rentabelligi
 - **Excel eksport**
-- **Biznes-reja simulyatori**: poda ko'payishi, oyma-oy pul oqimi, 3 ssenariy (yomon / o'rtacha / yaxshi), o'zini qoplash muddati
 - Bo'rdoqi kalkulyatori, yem kalkulyatori, tug'ish sanasi kalkulyatori
+
+### Prognoz — kelajakni hisoblash
+Chorvachilikdagi eng muhim savollarga javob beradi:
+
+| Savol | Javob |
+| --- | --- |
+| Qachon foydaga chiqaman? | Sarmoya qaytadigan va barqaror foyda boshlanadigan oy |
+| Qachon N boshga yetaman? | Masalan: «4 ta bo'g'oz qo'ydan 10 boshga taxminan 14-oyda, ehtimol 94%» |
+| Qachon X so'm topaman? | Sof foyda (sarmoya qaytgandan keyin) shu summaga yetadigan oy |
+| Qachon oyiga X so'm keladi? | O'rtacha oylik sof daromad shu darajaga chiqadigan oy |
+| Falon muddatda nima bo'ladi? | Bosh soni, naqd pul, poda qiymati |
+| Maqsad uchun nima kerak? | Belgilangan vaqtda maqsadga yetish uchun nechta ona va qancha sarmoya; zararsiz bo'lish uchun eng past narx; yem qanchagacha qimmatlashsa ham zarar yo'q |
+| Xatarlar | Zarar ehtimoli, eng yomon 10% holat, kasallik ehtimoli, yomon/yaxshi yil |
+
+**To'rtta model:**
+- **Ko'paytirish** (qo'y, echki, qoramol, ot, tuya, quyon): bo'g'ozlik, egizaklar, dam olish davri, bolalar o'limi, o'sish, erkaklarni sotish, urg'ochilarni podada qoldirish, qari onalarni almashtirish, joy sig'imi, yaylov mavsumi, sut va jun
+- **Partiya / bo'rdoqi** (broyler, kurka, o'rdak, baliq, sotib olib boqiladigan qo'y va buqachalar): sikllar, o'lim, yem konversiyasi, partiyani kengaytirish
+- **Tuxum tovuq**: tuxum qilish egri chizig'i, o'lim, tovuqlarni almashtirish
+- **Asalarichilik**: bahorgi bo'linish, qishki nobudgarchilik, asal va mum hosili
+
+**Xatarlar hisobga olinadi:** har bir prognoz 400 marta tasodifiy simulyatsiya qilinadi (Monte-Karlo): o'lim, kasallik chiqishi, bo'g'oz bo'lmaslik, egizaklar soni, narx tebranishi. Natija «80% holatda 14–27-oylar oralig'ida» ko'rinishida beriladi.
+
+**Natijada:** muhim sanalar, bosh soni va pul oqimi grafiklari (80% oraliq bilan), xarajatlar tarkibi, **nimalar kerak bo'ladi** (aylanma mablag', yem tonnasi, joy m², naslchilar soni), natijaga eng ko'p ta'sir qiladigan omillar, tavsiyalar, yillik va oylik jadval, CSV eksport, rejani saqlash.
+
+**Fermangiz bilan bog'liq:** hozirgi poda (onalar, naslchilar, bolalar yoshi bilan, bo'g'ozlar va tug'ish sanasi), oxirgi sotuv va yem narxlari, o'rtacha ish haqi va vet xarajati bir bosishda olinadi. O'ylab topilgan narxlar ishlatilmaydi.
 
 ### Avtomatik sozlash
 - Boqadigan hayvonlaringizni tanlaysiz — ilova ularga mos **xarajat va daromad turlarini**, **yem ro'yxatini**, **kunlik ratsionni** va **emlash eslatmalarini** taklif qiladi
@@ -190,11 +215,12 @@ Barcha hisob-kitoblar `src/lib/calc/` da sof funksiyalar sifatida yozilgan va te
 ```
 src/
   db/            Dexie sxemasi, standart turlar va kategoriyalar, ma'lumot amallari (repo.ts)
-  lib/calc/      hisob-kitoblar: tannarx, zararsizlik, o'sish, P&L, ko'payish, simulyator + testlar
+  lib/calc/      hisob-kitoblar: tannarx, zararsizlik, o'sish, P&L, ko'payish, narx tarixi + testlar
+  lib/forecast/  prognoz: 4 ta model, Monte-Karlo, muhim sanalar, ta'sir tahlili, teskari hisob + testlar
   lib/           pul/sana formatlash, eslatmalar, Android integratsiyasi, demo ma'lumotlar
   state/         sozlamalar va ferma ma'lumotlari (React context)
   components/    UI komponentlar va ikonkalar
-  features/      sahifalar: herd, finance, breeding, reports, calc, feed, health, production, more
+  features/      sahifalar: herd, finance, breeding, reports, forecast, calc, feed, health, production, more
 android/         Capacitor Android loyihasi
 scripts/         ikonka va splash generatori
 ```

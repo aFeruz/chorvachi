@@ -26,6 +26,13 @@ export function AboutPage() {
       ),
     ],
     [
+      t('Prognoz qanday hisoblaydi?', 'Как считается прогноз?'),
+      t(
+        "Har oy uchun tug'ish, o'lim, o'sish, sotish, yem va boshqa xarajatlar hisoblanadi. Bu 400 marta takrorlanadi: har safar o'lim, kasallik chiqishi, egizaklar soni va narx tasodifiy o'zgaradi. Shundan «kutilgan natija» va «80% holatda» oralig'i chiqariladi. Maqsadga erishilgan oy faqat natija kamida 6 oy saqlansa hisoblanadi. Narxlar fermangiz tarixidan olinadi yoki o'zingiz kiritasiz.",
+        'Для каждого месяца считаются роды, падёж, привес, продажи, корм и расходы. Это повторяется 400 раз: каждый раз падёж, болезни, двойни и цены меняются случайно. Отсюда «ожидаемый итог» и диапазон «в 80% случаев». Цель считается достигнутой, только если результат держится не менее 6 месяцев. Цены берутся из истории фермы или вводятся вручную.',
+      ),
+    ],
+    [
       t("Ma'lumotlar qayerda?", 'Где хранятся данные?'),
       t(
         "Faqat sizning qurilmangizda. Internet kerak emas. Telefon almashtirishdan oldin «Zaxira» bo'limidan nusxa oling.",
@@ -39,7 +46,7 @@ export function AboutPage() {
         <img src="./favicon.svg" className="size-16" alt="" />
         <div>
           <div className="text-xl font-bold">Chorva Hisob</div>
-          <div className="text-sm text-stone-500">v1.2 · {t('offline chorvachilik hisobi', 'офлайн учёт животноводства')}</div>
+          <div className="text-sm text-stone-500">v1.3 · {t('offline chorvachilik hisobi', 'офлайн учёт животноводства')}</div>
         </div>
       </Card>
       {items.map(([q, a]) => (

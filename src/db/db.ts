@@ -1,7 +1,7 @@
 import Dexie, { type EntityTable } from 'dexie'
 import type {
   Animal, Birth, Breeding, Category, Expense, Farm, FeedItem, FeedMove, Group, GroupMovement,
-  HealthEvent, Income, KV, Production, Ration, Reminder, Species, Weight,
+  HealthEvent, Income, KV, Plan, Production, Ration, Reminder, Species, Weight,
 } from './types'
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES, SPECIES_SEED } from './seed'
 
@@ -23,6 +23,7 @@ export class ChorvaDB extends Dexie {
   rations!: EntityTable<Ration, 'id'>
   health!: EntityTable<HealthEvent, 'id'>
   reminders!: EntityTable<Reminder, 'id'>
+  plans!: EntityTable<Plan, 'id'>
   kv!: EntityTable<KV, 'key'>
 
   constructor(name = 'chorva-hisob') {
@@ -47,6 +48,8 @@ export class ChorvaDB extends Dexie {
       reminders: 'id, farmId, date, done',
       kv: 'key',
     })
+    // v2: saqlangan prognozlar
+    this.version(2).stores({ plans: 'id, farmId, updatedAt' })
     this.on('populate', (tx) => {
       tx.table('species').bulkAdd(
         SPECIES_SEED.map((s) => ({ ...s, id: 'sp_' + s.key, builtin: true, enabled: true })),
@@ -68,7 +71,7 @@ export const db = new ChorvaDB()
 export const TABLES = [
   'farms', 'species', 'categories', 'groups', 'movements', 'animals', 'expenses', 'incomes',
   'weights', 'breedings', 'births', 'production', 'feedItems', 'feedMoves', 'rations', 'health',
-  'reminders', 'kv',
+  'reminders', 'plans', 'kv',
 ] as const
 
 /** Ferma bilan bog'liq jadvallar (fermani o'chirishda tozalanadi) */

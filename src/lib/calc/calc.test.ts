@@ -4,7 +4,6 @@ import { breakEven, saleResult } from './pricing'
 import { adg, holdOrSell } from './growth'
 import { pnl } from './pnl'
 import { reproStats, expectedBirthDate } from './reproduction'
-import { simulate, SIM_DEFAULT, scenarioInput } from './simulator'
 
 const species = [
   { id: 'sheep', lu: 0.15, mode: 'individual' as const },
@@ -116,18 +115,5 @@ describe('pnl & repro', () => {
     expect(s.conceptionPct).toBe(50)
     expect(s.yieldPer100).toBe(150)
     expect(s.stillbirthPct).toBe(25)
-  })
-})
-
-describe('simulator', () => {
-  it('runs and scenarios are ordered', () => {
-    const base = simulate(SIM_DEFAULT)
-    expect(base.rows).toHaveLength(36)
-    expect(base.investment).toBe(31 * 3_000_000 + 10_000_000)
-    expect(base.soldHeads).toBeGreaterThan(0)
-    const bad = simulate(scenarioInput(SIM_DEFAULT, 'bad'))
-    const good = simulate(scenarioInput(SIM_DEFAULT, 'good'))
-    expect(bad.totalProfit).toBeLessThan(base.totalProfit)
-    expect(good.totalProfit).toBeGreaterThan(base.totalProfit)
   })
 })

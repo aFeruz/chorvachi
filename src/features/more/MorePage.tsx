@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { Bell, Calculator, ChevronRight, DatabaseBackup, Heart, House, Info, Milk, PawPrint, Settings, Syringe, Tags, Wand2, Wheat, type LucideIcon } from 'lucide-react'
+import { Bell, Calculator, ChevronRight, DatabaseBackup, Heart, House, Info, Milk, PawPrint, Settings, Syringe, Tags, TrendingUp, Wand2, Wheat, type LucideIcon } from 'lucide-react'
 import { IconTile } from '../../components/icons'
 import { useFarm } from '../../state/farm'
 import { useSettings } from '../../state/settings'
@@ -17,7 +17,8 @@ export function MorePage() {
       <Section title={t('Xo\'jalik', 'Хозяйство')}>
         <List>
           {row(Wand2, '#027a48', t('Avtomatik sozlash', 'Автонастройка'), t("Kategoriya, yem, ratsion va emlashni taxminiy to'ldirish", 'Заполнить категории, корма, рацион и вакцинацию'), '/setup')}
-          {row(Calculator, '#7c3aed', t('Kalkulyatorlar', 'Калькуляторы'), t("Sotish narxi, biznes-reja, yem, tug'ish", 'Цена продажи, бизнес-план, корм, роды'), '/calc')}
+          {row(TrendingUp, '#027a48', t('Prognoz', 'Прогноз'), t("Qachon ko'payadi, qachon foydaga chiqadi", 'Рост стада и окупаемость'), '/forecast')}
+          {row(Calculator, '#7c3aed', t('Kalkulyatorlar', 'Калькуляторы'), t("Sotish narxi, bo'rdoqi, yem, tug'ish sanasi", 'Цена продажи, откорм, корм, дата родов'), '/calc')}
           {row(Heart, '#db2777', t("Ko'payish", 'Воспроизводство'), t("Qochirish, bo'g'ozlik, tug'ish", 'Случки, стельность, роды'), '/breeding')}
           {row(Syringe, '#dc2626', t("Sog'liq va emlash", 'Здоровье и вакцинация'), t('Vaksina, davolash, keyingi sana', 'Вакцины, лечение, график'), '/health')}
           {row(Wheat, '#a16207', t('Yem ombori', 'Склад кормов'), t('Qoldiq, ratsion, necha kunga yetadi', 'Остатки, рацион, запас в днях'), '/feed')}

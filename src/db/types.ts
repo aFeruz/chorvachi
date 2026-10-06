@@ -243,6 +243,20 @@ export interface Reminder {
   createdAt: number
 }
 
+/** Saqlangan prognoz (reja) */
+export interface Plan {
+  id: ID
+  farmId: ID
+  name: string
+  speciesId: ID
+  /** ForecastInput (lib/forecast/types) */
+  input: unknown
+  /** Goal (lib/forecast/analyze) */
+  goal: unknown
+  createdAt: number
+  updatedAt: number
+}
+
 export interface KV {
   key: string
   value: unknown

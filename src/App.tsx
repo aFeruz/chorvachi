@@ -36,7 +36,8 @@ import { useNativeIntegration } from './lib/native'
 
 // Diagrammali og'ir sahifalar alohida yuklanadi
 const ReportsPage = lazy(() => import('./features/reports/ReportsPage'))
-const PlanSimulator = lazy(() => import('./features/calc/PlanSimulator'))
+const ForecastHub = lazy(() => import('./features/forecast/ForecastHub'))
+const ForecastPage = lazy(() => import('./features/forecast/ForecastPage'))
 
 function Splash() {
   return (
@@ -88,7 +89,10 @@ function Gate() {
             <Route path="/reports" element={<ReportsPage />} />
             <Route path="/calc" element={<CalcHub />} />
             <Route path="/calc/sale" element={<SaleCalc />} />
-            <Route path="/calc/plan" element={<PlanSimulator />} />
+            <Route path="/calc/plan" element={<Navigate to="/forecast" replace />} />
+            <Route path="/forecast" element={<ForecastHub />} />
+            <Route path="/forecast/new" element={<ForecastPage />} />
+            <Route path="/forecast/:id" element={<ForecastPage />} />
             <Route path="/calc/feed" element={<FeedCalc />} />
             <Route path="/calc/gestation" element={<GestationCalc />} />
             <Route path="/feed" element={<FeedPage />} />

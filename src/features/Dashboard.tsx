@@ -193,13 +193,22 @@ export function Dashboard() {
         )}
       </Section>
 
+      <Card onClick={() => nav('/forecast')} className="mb-3 flex items-center gap-3 border-brand-200 dark:border-brand-900">
+        <IconTile icon={TrendingUp} color="#027a48" />
+        <div className="flex-1">
+          <div className="font-semibold">{t('Prognoz: kelajakni hisoblash', 'Прогноз: расчёт будущего')}</div>
+          <div className="text-sm text-stone-500">{t("Qachon ko'payadi, qachon foydaga chiqasiz, nima kerak", 'Когда вырастет стадо, когда прибыль, что нужно')}</div>
+        </div>
+        <ChevronRight className="text-stone-400" />
+      </Card>
+
       <Card onClick={() => nav('/calc')} className="mb-4 flex items-center gap-3">
         <span className="grid size-11 place-items-center rounded-xl bg-violet-100 text-violet-700 dark:bg-violet-950/50 dark:text-violet-300">
           <Calculator size={22} />
         </span>
         <div className="flex-1">
           <div className="font-semibold">{t('Kalkulyatorlar', 'Калькуляторы')}</div>
-          <div className="text-sm text-stone-500">{t("Sotish narxi, biznes-reja, yem, tug'ish sanasi", 'Цена продажи, бизнес-план, корм, дата родов')}</div>
+          <div className="text-sm text-stone-500">{t("Sotish narxi, bo'rdoqi, yem, tug'ish sanasi", 'Цена продажи, откорм, корм, дата родов')}</div>
         </div>
         <ChevronRight className="text-stone-400" />
       </Card>
