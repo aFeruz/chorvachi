@@ -137,16 +137,34 @@ describe('tuxum tovuq va asalari', () => {
 })
 
 describe('tahlil', () => {
-  it("qoplanish oyi: naqd pul nolga yetgan birinchi oy", () => {
-    const rows = [-10, -5, 2, 4].map((cash, k) => ({ m: k + 1, cash, wealth: cash, net: 1, heads: 0, core: 0, born: 0, rev: { animals: 0, culls: 0 } })) as never
-    expect(milestones(rows, DEFAULT_GOAL, -12).payback).toBe(3)
-    expect(milestones(rows, DEFAULT_GOAL, 5).payback).toBe(0)
+  const mkRows = (cash: number[]) =>
+    cash.map((c, k) => ({ m: k + 1, cash: c, wealth: c, net: 1, revenue: 0, heads: 0, core: 0, born: 0, rev: { animals: 0, culls: 0 } })) as never
+
+  it("qoplanish: naqd pul boshlang'ich darajaga barqaror qaytgan oy", () => {
+    const rows = mkRows([-10, -5, 2, -1, 3, 4, 5, 6, 7, 8])
+    // 3-oyda qisqa vaqt 0 dan oshadi, lekin 4-oyda yana tushadi -> barqaror qaytish 5-oy
+    expect(milestones(rows, DEFAULT_GOAL, { initialCash: -12, paybackTarget: 0, baseWealth: 0 }).payback).toBe(5)
+  })
+
+  it("sarmoyasiz, lekin keyin zarar bo'lsa — «hozirning o'zida» emas", () => {
+    const rows = mkRows([-1, -5, -9, -12, -15, -20])
+    expect(milestones(rows, DEFAULT_GOAL, { initialCash: 0, paybackTarget: 0, baseWealth: 0 }).payback).toBeUndefined()
+    const ok = mkRows([1, 2, 3, 4])
+    expect(milestones(ok, DEFAULT_GOAL, { initialCash: 0, paybackTarget: 0, baseWealth: 0 }).payback).toBe(0)
+  })
+
+  it("bor poda hisobga olinadi: boylik kamaysa — zarar", () => {
+    const i = sheep({ buyStart: false, females: 30, keepFemales: false, laborMonth: 5_000_000, months: 36 })
+    const f = forecast(i, DEFAULT_GOAL, 100)
+    expect(f.summary.baseWealth).toBeGreaterThan(0)
+    expect(f.summary.gain).toBeLessThan(0)
+    expect(f.mc.lossProb).toBeGreaterThan(0.5)
   })
 
   it("bosh soni maqsadi faqat barqaror bo'lsa hisoblanadi", () => {
     const heads = [5, 11, 11, 7, 7, 7, 10, 10, 10, 10, 10, 10, 10]
     const rows = heads.map((h, k) => ({ m: k + 1, heads: h, core: h, cash: 0, wealth: 0, net: 0, born: 0, rev: { animals: 0, culls: 0 } })) as never
-    expect(milestones(rows, { ...DEFAULT_GOAL, heads: 10 }, 0).heads).toBe(7)
+    expect(milestones(rows, { ...DEFAULT_GOAL, heads: 10 }, { initialCash: 0, paybackTarget: 0, baseWealth: 0 }).heads).toBe(7)
   })
 
   it("aylanma mablag': eng chuqur nuqta", () => {
@@ -176,5 +194,69 @@ describe('tahlil', () => {
     const t0 = performance.now()
     forecast(sheep({ females: 50, months: 60 }), DEFAULT_GOAL, 400)
     expect(performance.now() - t0).toBeLessThan(4000)
+  })
+})
+
+describe("tekshiruvda topilgan xatolar", () => {
+  it("kasallik ehtimoli 100% dan oshsa ham NaN bo'lmaydi", () => {
+    const i: BatchInput = { ...(defaultInput('batch', 'broiler', '2026-01') as BatchInput), diseaseRiskPct: 150, salePricePerKg: 24_000, feedPricePerKg: 6_000, unitPrice: 7_000 }
+    expect(simulate(i).rows.every((r) => Number.isFinite(r.cash))).toBe(true)
+  })
+
+  it("tovuqlar hammasi nobud bo'lsa — yangilari olinadi", () => {
+    const i: LayerInput = { ...(defaultInput('layer', 'layer', '2026-01') as LayerInput), ...quiet, monthlyMortalityPct: 100, eggPrice: 1_000, feedPricePerKg: 5_000, pulletPrice: 40_000, months: 6 }
+    const rows = simulate(i).rows
+    expect(rows[0].heads).toBe(0)
+    expect(rows.some((r) => r.costs.stock > 0)).toBe(true)
+  })
+
+  it("asal oyi tanlanmasa — asal yo'q va ogohlantirish", () => {
+    const i: ApiaryInput = { ...(defaultInput('apiary', 'bee', '2026-01') as ApiaryInput), ...quiet, honeyPricePerKg: 80_000, harvestMonths: [] }
+    const res = simulate(i)
+    expect(res.rows.reduce((s, r) => s + r.rev.honey, 0)).toBe(0)
+    expect(res.warnings).toContain('noHarvest')
+  })
+
+  it("yagona naslchi o'lsa ham ko'payish davom etadi (naslchi almashtiriladi)", () => {
+    const i = sheep({ females: 10, males: 1, adultMortalityPct: 30, months: 72 })
+    // onalar tirik bo'lsa-yu, tug'ish to'xtagan holatlar bo'lmasligi kerak
+    let stopped = 0
+    for (let k = 0; k < 60; k++) {
+      const rows = simulate(i, seeded(k)).rows
+      if (rows[47].core >= 2 && rows.slice(48).every((r) => r.born === 0)) stopped++
+    }
+    expect(stopped).toBe(0)
+  })
+
+  it('onalar yoshi turlicha bo\'lsa — bir oyda hammasi sotilib ketmaydi', () => {
+    const i = sheep({ females: 3, femaleGroups: [{ ageMonths: 20, count: 1 }, { ageMonths: 50, count: 1 }, { ageMonths: 79, count: 1 }], keepFemales: false, adultMortalityPct: 0, months: 40 })
+    const culls = simulate(i).rows.filter((r) => r.rev.culls > 0).map((r) => r.m)
+    expect(culls.length).toBeGreaterThanOrEqual(2)
+  })
+
+  it("teskari hisob qaysi muddat va maqsad uchun ekanini qaytaradi", () => {
+    const i = sheep({ females: 4, months: 12 })
+    const need = solveNeeds(i, { ...DEFAULT_GOAL, type: 'heads', heads: 20, byMonth: 24 }, 0.8, 30)
+    expect(need.months).toBe(12)
+    expect(need.kind).toBe('heads')
+    const none = solveNeeds(i, { ...DEFAULT_GOAL, type: 'profit' }, 0.8, 30)
+    expect(none.kind).toBeUndefined()
+    expect(none.startCount).toBeUndefined()
+  })
+})
+
+describe('kiritishni tozalash', () => {
+  it("eski rejada yetishmagan maydonlar to'ldiriladi, chegaralar qo'llanadi", async () => {
+    const { sanitizeInput, sanitizeGoal } = await import('./sanitize')
+    const def = defaultInput('herd', 'sheep', '2026-01')
+    const old = { model: 'herd', females: 7.6, pregnant: 20, months: 2, diseaseRiskPct: 300, salePricePerKg: 50_000 } as never
+    const s = sanitizeInput(old, def) as HerdInput
+    expect(s.females).toBe(8)
+    expect(s.pregnant).toBe(8)
+    expect(s.months).toBe(6)
+    expect(s.diseaseRiskPct).toBe(100)
+    expect(s.litterSize).toBe((def as HerdInput).litterSize)
+    expect(Number.isFinite(simulate(s).rows.at(-1)!.cash)).toBe(true)
+    expect(sanitizeGoal({ type: 'xyz' as never }).type).toBe('profit')
   })
 })

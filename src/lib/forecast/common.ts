@@ -79,6 +79,12 @@ export function startCount(i: ForecastInput): number {
 /** Boshida sarflanadigan pul. Partiya modelida jo'ja/bola narxi har partiyada alohida hisoblanadi. */
 export function investmentOf(i: ForecastInput): number {
   if (!i.buyStart || i.model === 'batch') return i.setupCost
-  const extra = i.model === 'herd' ? i.males * i.malePrice : 0
+  let extra = 0
+  if (i.model === 'herd') {
+    extra += i.males * i.malePrice
+    // birga sotib olinadigan yosh hayvonlar — bozor qiymatida (vazn × 1 kg narxi)
+    const w = (age: number) => Math.min(i.adultWeightKg, i.birthWeightKg + i.adgKg * DAYS * age)
+    extra += i.young.reduce((s, y) => s + (y.females + y.males) * w(y.ageMonths) * i.salePricePerKg, 0)
+  }
   return i.setupCost + startCount(i) * i.purchasePrice + extra
 }

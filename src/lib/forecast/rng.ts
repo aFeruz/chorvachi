@@ -61,7 +61,8 @@ export function seeded(seed: number): Rand {
 }
 
 export function clamp01(x: number): number {
-  return x < 0 ? 0 : x > 1 ? 1 : x
+  // NaN ham 0 deb olinadi
+  return !(x > 0) ? 0 : x > 1 ? 1 : x
 }
 
 /** yillik ehtimolni oylik ehtimolga o'tkazish */

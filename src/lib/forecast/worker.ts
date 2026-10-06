@@ -16,15 +16,20 @@ export interface WorkerResponse {
   error?: string
 }
 
+const post = (r: WorkerResponse) => (self as unknown as Worker).postMessage(r)
+
 self.onmessage = (e: MessageEvent<WorkerRequest>) => {
   const { id, input, goal, runs } = e.data
   try {
-    const result = forecast(input, goal, runs)
-    // teskari hisob og'irroq — alohida javob bilan yuboriladi
-    ;(self as unknown as Worker).postMessage({ id, result } satisfies WorkerResponse)
-    const needs = solveNeeds(input, goal, 0.8, 80)
-    ;(self as unknown as Worker).postMessage({ id, needs } satisfies WorkerResponse)
+    post({ id, result: forecast(input, goal, runs) })
   } catch (err) {
-    ;(self as unknown as Worker).postMessage({ id, error: String(err) } satisfies WorkerResponse)
+    post({ id, error: String(err) })
+    return
+  }
+  // teskari hisob og'irroq — alohida javob; xato bo'lsa ham asosiy natija qoladi
+  try {
+    post({ id, needs: solveNeeds(input, goal, 0.8, 80) })
+  } catch {
+    post({ id, needs: { months: input.months } })
   }
 }

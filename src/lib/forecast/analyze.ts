@@ -40,10 +40,29 @@ export interface Goal {
 
 export const DEFAULT_GOAL: Goal = { type: 'profit', heads: 10, headsMetric: 'total', amount: 50_000_000, byMonth: 24, needKind: 'heads' }
 
+/**
+ * Taqqoslash asosi:
+ * - initialCash: sarmoya qilingandan keyingi naqd holat
+ * - paybackTarget: "sarmoya qaytdi" deyish uchun naqd qaysi darajaga qaytishi kerak
+ *   (yangi boshlaganda — boshlang'ich naqdga, o'tgan zararlar bo'lsa — nolga)
+ * - baseWealth: boshlashdan oldingi boylik (naqd + fermada BOR poda qiymati).
+ *   Zarar / zararsizlik shunga nisbatan o'lchanadi.
+ */
+export interface Baseline {
+  initialCash: number
+  paybackTarget: number
+  baseWealth: number
+}
+
+export function baselineOf(i: ForecastInput, res: RunResult): Baseline {
+  const owned = i.buyStart || i.model === 'batch' ? 0 : res.startHerdValue
+  return { initialCash: i.startCash - investmentOf(i), paybackTarget: i.startCash >= 0 ? i.startCash : 0, baseWealth: i.startCash + owned }
+}
+
 export type MilestoneKey = 'firstBirth' | 'firstSale' | 'profitable' | 'payback' | 'wealthPositive' | 'heads' | 'cash' | 'monthly'
 
 /** Bitta simulyatsiya qatorlaridan muhim oylar (yetmasa — undefined) */
-export function milestones(rows: MonthRow[], goal: Goal, initialCash: number): Record<MilestoneKey, number | undefined> {
+export function milestones(rows: MonthRow[], goal: Goal, b: Baseline): Record<MilestoneKey, number | undefined> {
   const first = (pred: (r: MonthRow, idx: number) => boolean) => {
     const idx = rows.findIndex(pred)
     return idx < 0 ? undefined : rows[idx].m
@@ -58,6 +77,8 @@ export function milestones(rows: MonthRow[], goal: Goal, initialCash: number): R
   const sustained = (pred: (idx: number) => boolean, hold: number) => {
     for (let idx = 0; idx < rows.length; idx++) {
       if (!pred(idx)) continue
+      // muddat oxiriga yaqin bo'lsa ham kamida 3 oy (yoki hold) saqlanishi kerak
+      if (rows.length - idx < Math.min(hold, 3)) return undefined
       const end = Math.min(rows.length - 1, idx + hold - 1)
       let ok = true
       for (let k = idx + 1; k <= end && ok; k++) ok = pred(k)
@@ -70,11 +91,15 @@ export function milestones(rows: MonthRow[], goal: Goal, initialCash: number): R
   const minWindow = Math.min(11, Math.max(5, rows.length - 1))
   return {
     firstBirth: first((r) => r.born >= 0.5),
-    firstSale: first((r) => r.rev.animals + r.rev.culls > 0),
+    firstSale: first((r) => r.revenue > 0),
     // 12 oylik sof daromad musbat bo'lib, muddat oxirigacha shunday qoladigan birinchi oy
     profitable: sustained((idx) => idx >= minWindow && trailing(idx).sum > 0, rows.length),
-    payback: initialCash >= 0 ? 0 : first((r) => r.cash >= 0),
-    wealthPositive: first((r) => r.wealth >= 0),
+    // naqd hech qachon maqsaddan pastga tushmasa — qo'shimcha pul kerak emas (0)
+    payback:
+      b.initialCash >= b.paybackTarget && rows.every((r) => r.cash >= b.paybackTarget)
+        ? 0
+        : sustained((idx) => rows[idx].cash >= b.paybackTarget, 6),
+    wealthPositive: sustained((idx) => rows[idx].wealth >= b.baseWealth, 3),
     // bosh soni kamida 6 oy shu darajada turishi kerak (qo'zilar tug'ilib, keyin sotilib ketishi hisobga olinadi)
     heads: sustained((idx) => headsOf(idx) >= goal.heads - 1e-6, 6),
     cash: sustained((idx) => rows[idx].cash >= goal.amount, 3),
@@ -159,6 +184,7 @@ export function monteCarlo(i: ForecastInput, goal: Goal, runs = 400, seed = 1234
   const peak: number[] = []
   let outbreaks = 0
   const init = initialCashOf(i)
+  let base: Baseline | undefined
 
   for (let k = 0; k < runs; k++) {
     const res = simulate(i, seeded(seed + k * 7919))
@@ -168,7 +194,8 @@ export function monteCarlo(i: ForecastInput, goal: Goal, runs = 400, seed = 1234
       cash[idx].push(r.cash)
       wealth[idx].push(r.wealth)
     })
-    const mm = milestones(res.rows, goal, init)
+    base ??= baselineOf(i, res)
+    const mm = milestones(res.rows, goal, base)
     for (const key of Object.keys(ms) as MilestoneKey[]) ms[key].push(mm[key] ?? Infinity)
     const last = res.rows[res.rows.length - 1]
     fw.push(last?.wealth ?? init)
@@ -216,7 +243,7 @@ export function monteCarlo(i: ForecastInput, goal: Goal, runs = 400, seed = 1234
     finalWealth: tri(fw),
     finalCash: tri(fc),
     finalHeads: tri(fh),
-    lossProb: fw.filter((v) => v < 0).length / runs,
+    lossProb: fw.filter((v) => v < (base?.baseWealth ?? 0)).length / runs,
     outbreakProb: outbreaks / runs,
     workingCapitalP90: percentile(sortNum(wc), 0.9),
     peakHeadsP90: percentile(sortNum(peak), 0.9),
@@ -244,6 +271,10 @@ export interface YearRow {
 export interface Summary {
   investment: number
   initialCash: number
+  /** boshlashdan oldingi boylik (naqd + bor poda) */
+  baseWealth: number
+  /** muddat oxiridagi boylik − boshlang'ich boylik */
+  gain: number
   revenue: number
   cost: number
   net: number
@@ -294,11 +325,13 @@ export function summarize(i: ForecastInput, res: RunResult): Summary {
   }
   const investment = investmentOf(i)
   const last = rows[rows.length - 1]
+  const base = baselineOf(i, res)
   const wc = workingCapital(i, rows)
   const years: YearRow[] = []
   for (let y = 0; y * 12 < rows.length; y++) {
     const part = rows.slice(y * 12, y * 12 + 12)
     const end = part[part.length - 1]
+    if (!end) continue
     years.push({
       year: y + 1,
       revenue: part.reduce((s, r) => s + r.revenue, 0),
@@ -316,6 +349,8 @@ export function summarize(i: ForecastInput, res: RunResult): Summary {
   return {
     investment,
     initialCash: initialCashOf(i),
+    baseWealth: base.baseWealth,
+    gain: (last?.wealth ?? initialCashOf(i)) - base.baseWealth,
     revenue,
     cost,
     net: revenue - cost,
@@ -332,7 +367,7 @@ export function summarize(i: ForecastInput, res: RunResult): Summary {
     sold,
     died,
     avgMonthlyNet: rows.length ? (revenue - cost) / rows.length : 0,
-    roiPct: investment > 0 && last ? ((last.wealth - i.startCash) / investment) * 100 : undefined,
+    roiPct: investment > 0 && last ? ((last.wealth - base.baseWealth) / investment) * 100 : undefined,
     workingCapital: wc.need,
     worstMonth: wc.month,
     feedKgFirstYear: rows.slice(0, 12).reduce((s, r) => s + r.feedKg, 0),
@@ -413,9 +448,12 @@ export function sensitivity(i: ForecastInput, pct = 20): FactorImpact[] {
     .sort((a, b) => b.swing - a.swing)
 }
 
+/** muddat oxirida boshlang'ich boylikka nisbatan natija (musbat — foyda) */
 function finalWealth(i: ForecastInput): number {
-  const rows = simulate(i).rows
-  return rows.length ? rows[rows.length - 1].wealth : initialCashOf(i)
+  const res = simulate(i)
+  const rows = res.rows
+  const last = rows.length ? rows[rows.length - 1].wealth : initialCashOf(i)
+  return last - baselineOf(i, res).baseWealth
 }
 
 /** Yomon va yaxshi ssenariylar (deterministik) */
@@ -519,6 +557,10 @@ function searchMin(f: (x: number) => boolean, lo: number, hi: number, integer: b
 }
 
 export interface NeedResult {
+  /** qaysi maqsad uchun hisoblangan va qaysi muddatga */
+  kind?: 'heads' | 'cash'
+  months: number
+  target?: number
   /** maqsadga 80% ishonch bilan yetish uchun kerakli boshlang'ich bosh soni */
   startCount?: number
   startInvestment?: number
@@ -531,29 +573,33 @@ export interface NeedResult {
 }
 
 export function solveNeeds(i: ForecastInput, goal: Goal, confidence = 0.8, runs = 120): NeedResult {
-  const T = Math.min(i.months, Math.max(1, goal.byMonth))
+  // Qaysi savol: "need" — tanlangan tur va muddat; "heads"/"cash" — butun muddat
+  const kind: 'heads' | 'cash' | undefined =
+    goal.type === 'need' ? goal.needKind : goal.type === 'heads' ? 'heads' : goal.type === 'cash' ? 'cash' : undefined
+  const T = goal.type === 'need' ? Math.min(i.months, Math.max(1, goal.byMonth)) : i.months
   const horizon: ForecastInput = { ...i, months: T }
-  const init = (x: ForecastInput) => initialCashOf(x)
-  const reachedProb = (x: ForecastInput) => {
-    let ok = 0
-    for (let k = 0; k < runs; k++) {
-      const rows = simulate(x, seeded(777 + k * 31)).rows
-      const m = milestones(rows, goal, init(x))
-      if ((goal.needKind === 'heads' ? m.heads : m.cash) !== undefined) ok++
+  const out: NeedResult = { kind, months: T, target: kind === 'heads' ? goal.heads : kind === 'cash' ? goal.amount : undefined }
+  if (kind) {
+    const reachedProb = (x: ForecastInput) => {
+      let ok = 0
+      for (let k = 0; k < runs; k++) {
+        const res = simulate(x, seeded(777 + k * 31))
+        const m = milestones(res.rows, goal, baselineOf(x, res))
+        if ((kind === 'heads' ? m.heads : m.cash) !== undefined) ok++
+      }
+      return ok / runs
     }
-    return ok / runs
+    const cur = Math.max(1, startCount(i))
+    const n = searchMin((x) => reachedProb(withStartCount(horizon, x)) >= confidence, 1, Math.max(cur * 20, 50), true, 24)
+    if (n !== undefined) {
+      out.startCount = n
+      out.startInvestment = investmentOf(withStartCount(i, n))
+    }
   }
-  const out: NeedResult = {}
-  const cur = Math.max(1, startCount(i))
-  const n = searchMin((x) => reachedProb(withStartCount(horizon, x)) >= confidence, 1, Math.max(cur * 20, 50), true, 14)
-  if (n !== undefined) {
-    out.startCount = n
-    out.startInvestment = investmentOf(withStartCount(i, n))
-  }
-  if (goal.needKind === 'cash') {
+  if (kind === 'cash') {
     const lastCash = (x: ForecastInput) => {
       const rows = simulate(x).rows
-      return rows.length ? rows[rows.length - 1].cash : init(x)
+      return rows.length ? rows[rows.length - 1].cash : initialCashOf(x)
     }
     out.priceFactor = searchMin((k) => lastCash(withSalePrice(horizon, k)) >= goal.amount, 0, 10, false)
   }
@@ -596,16 +642,16 @@ export function forecast(i: ForecastInput, goal: Goal, runs = 400): Forecast {
   const expected = simulate(i)
   const badRun = simulate(scenario(i, 'bad'))
   const goodRun = simulate(scenario(i, 'good'))
-  const init = initialCashOf(i)
+  const base = baselineOf(i, expected)
   return {
     expected,
     summary: summarize(i, expected),
-    milestones: milestones(expected.rows, goal, init),
+    milestones: milestones(expected.rows, goal, base),
     mc: monteCarlo(i, goal, runs),
     bad: summarize(i, badRun),
     good: summarize(i, goodRun),
-    badMilestones: milestones(badRun.rows, goal, init),
-    goodMilestones: milestones(goodRun.rows, goal, init),
+    badMilestones: milestones(badRun.rows, goal, base),
+    goodMilestones: milestones(goodRun.rows, goal, base),
     sensitivity: sensitivity(i),
   }
 }

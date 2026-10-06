@@ -1,5 +1,5 @@
 import { DAYS, draft, finalize, fixedCosts, makeEconomy, monthAt, type RowDraft, investmentOf } from './common'
-import type { Rand } from './rng'
+import { clamp01, type Rand } from './rng'
 import type { BatchInput, MonthRow, RunResult } from './types'
 
 /**
@@ -29,7 +29,7 @@ export function runBatch(i: BatchInput, R: Rand): RunResult {
     dm.costs.other += i.otherCostPerBatch * C
 
     // o'lim va kasallik shu partiya uchun
-    const pOutbreak = 1 - Math.pow(1 - i.diseaseRiskPct / 100, cycle / 365)
+    const pOutbreak = 1 - Math.pow(1 - clamp01(i.diseaseRiskPct / 100), cycle / 365)
     const ev = R.event(pOutbreak)
     const normalDead = R.binom(size, i.mortalityPct / 100)
     const diseaseDead = R.binom(size - normalDead, (ev * i.diseaseLossPct) / 100)

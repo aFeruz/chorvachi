@@ -44,6 +44,8 @@ export interface HerdInput extends BaseInput {
   // boshlang'ich poda
   females: number
   femaleAgeMonths: number
+  /** onalar yoshi bo'yicha (fermadan olinganda); bo'lmasa hammasi femaleAgeMonths yoshida */
+  femaleGroups?: { ageMonths: number; count: number }[]
   pregnant: number
   dueInMonths: number
   males: number

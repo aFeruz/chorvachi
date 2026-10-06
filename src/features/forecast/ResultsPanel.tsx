@@ -27,11 +27,13 @@ export function ResultsPanel({ input, goal, result, needs, missing, speciesKey }
   const rows = expected.rows
   const hasMoney = missing.length === 0
   const unit = headUnit(t, input)
+  /** boshlang'ich holatga nisbatan (bor poda ham hisobga olingan) */
+  const gainOf = (wealth: number) => wealth - s.baseWealth
 
   /** m-oy -> "27-oy (mar 2028)" */
   const when = (m?: number) => {
     if (m === undefined) return t('muddat ichida emas', 'не в пределах срока')
-    if (m === 0) return t('hozirning o\'zida', 'уже сейчас')
+    if (m === 0) return t("qo'shimcha pul kerak emas", 'доп. вложения не нужны')
     const key = rows[m - 1]?.month
     return `${m}-${t('oy', 'й мес.')}${key ? ` (${monthText(lang, key)})` : ''}`
   }
@@ -82,15 +84,15 @@ export function ResultsPanel({ input, goal, result, needs, missing, speciesKey }
         )
       case 'horizon':
         return {
-          tone: s.finalWealth >= 0 ? 'good' : 'bad',
+          tone: s.gain >= 0 ? 'good' : 'bad',
           title: t(
-            `${durationText(t, input.months)}dan keyin: ${formatNum(s.finalHeads, 0)} ${unit}, natija ${short(s.finalWealth)}`,
-            `Через ${durationText(t, input.months)}: ${formatNum(s.finalHeads, 0)} ${unit}, итог ${short(s.finalWealth)}`,
+            `${durationText(t, input.months)}dan keyin: ${formatNum(s.finalHeads, 0)} ${unit}, natija ${s.gain >= 0 ? '+' : ''}${short(s.gain)}`,
+            `Через ${durationText(t, input.months)}: ${formatNum(s.finalHeads, 0)} ${unit}, итог ${s.gain >= 0 ? '+' : ''}${short(s.gain)}`,
           ),
           sub: (
             <>
               {t('80% holatda bosh soni', 'В 80% случаев поголовье')}: {formatNum(mc.finalHeads.p10, 0)}–{formatNum(mc.finalHeads.p90, 0)} ·{' '}
-              {t('natija', 'итог')}: {short(mc.finalWealth.p10)} … {short(mc.finalWealth.p90)}
+              {t('natija', 'итог')}: {short(gainOf(mc.finalWealth.p10))} … {short(gainOf(mc.finalWealth.p90))}
             </>
           ),
         }
@@ -102,8 +104,8 @@ export function ResultsPanel({ input, goal, result, needs, missing, speciesKey }
             ? t('Hisoblanmoqda…', 'Считаем…')
             : n !== undefined
               ? goal.needKind === 'heads'
-                ? t(`${goal.byMonth} oyda ${formatNum(goal.heads, 0)} ${unit} uchun kamida ${n} ${startUnit(t, input)} kerak`, `Для ${formatNum(goal.heads, 0)} ${unit} за ${goal.byMonth} мес. нужно минимум ${n} ${startUnit(t, input)}`)
-                : t(`${goal.byMonth} oyda ${short(goal.amount)} uchun kamida ${n} ${startUnit(t, input)} kerak`, `Для ${short(goal.amount)} за ${goal.byMonth} мес. нужно минимум ${n} ${startUnit(t, input)}`)
+                ? t(`${needs.months} oyda ${formatNum(goal.heads, 0)} ${unit} uchun kamida ${n} ${startUnit(t, input)} kerak`, `Для ${formatNum(goal.heads, 0)} ${unit} за ${needs.months} мес. нужно минимум ${n} ${startUnit(t, input)}`)
+                : t(`${needs.months} oyda ${short(goal.amount)} uchun kamida ${n} ${startUnit(t, input)} kerak`, `Для ${short(goal.amount)} за ${needs.months} мес. нужно минимум ${n} ${startUnit(t, input)}`)
               : t('Bu maqsadga shu shartlarda yetib bo\'lmaydi', 'При этих условиях цель недостижима'),
           sub: needs?.startInvestment !== undefined ? <>{t('Kerakli sarmoya', 'Нужные вложения')}: <b>{money(needs.startInvestment)}</b> · {t("80% ishonch bilan", 'с уверенностью 80%')}</> : t("80% ishonch bilan hisoblanadi", 'Расчёт с уверенностью 80%'),
         }
@@ -114,11 +116,18 @@ export function ResultsPanel({ input, goal, result, needs, missing, speciesKey }
           title: t(`Zarar ko'rish ehtimoli: ${pct(mc.lossProb * 100, 0)}`, `Вероятность убытка: ${pct(mc.lossProb * 100, 0)}`),
           sub: (
             <>
-              {t('Eng yomon 10% holatda natija', 'В худших 10% случаев итог')}: <b>{money(mc.finalWealth.p10)}</b> · {t('kasallik chiqish ehtimoli', 'вероятность болезни')}: {pct(mc.outbreakProb * 100, 0)}
+              {t('Eng yomon 10% holatda natija', 'В худших 10% случаев итог')}: <b>{money(gainOf(mc.finalWealth.p10))}</b> · {t('kasallik chiqish ehtimoli', 'вероятность болезни')}: {pct(mc.outbreakProb * 100, 0)}
             </>
           ),
         }
       default:
+        if (ms.payback === 0)
+          return {
+            key: 'payback',
+            tone: 'good',
+            title: t("Qo'shimcha sarmoya kerak emas — xarajatlar daromad bilan qoplanadi", 'Дополнительные вложения не нужны — расходы покрываются доходом'),
+            sub: <>{t('Muddat oxirida natija', 'Итог на конец срока')}: <b>{s.gain >= 0 ? '+' : ''}{money(s.gain)}</b></>,
+          }
         return mk(
           'payback',
           (w) => t(`Sarmoya taxminan ${w} to'liq qaytadi`, `Вложения вернутся примерно на ${w}`),
@@ -267,7 +276,9 @@ export function ResultsPanel({ input, goal, result, needs, missing, speciesKey }
             <div className="my-2 border-t border-stone-100 dark:border-stone-800" />
             <KV label={t('Muddat oxirida naqd', 'Деньги на конец')} value={money(s.finalCash)} strong />
             <KV label={t('Poda qiymati', 'Стоимость стада')} value={money(s.finalHerdValue)} />
-            <KV label={t('Umumiy natija (naqd + poda)', 'Итог (деньги + стадо)')} value={<b className={s.finalWealth >= 0 ? 'text-brand-700 dark:text-brand-400' : 'text-red-600'}>{money(s.finalWealth)}</b>} strong />
+            <KV label={t('Naqd + poda qiymati', 'Деньги + стадо')} value={money(s.finalWealth)} />
+            {s.baseWealth !== 0 && <KV label={t("Boshlang'ich holat (naqd + bor poda)", 'Исходно (деньги + своё стадо)')} value={money(s.baseWealth)} />}
+            <KV label={t("Sof natija (boshlang'ichga nisbatan)", 'Чистый итог (к исходному)')} value={<b className={s.gain >= 0 ? 'text-brand-700 dark:text-brand-400' : 'text-red-600'}>{s.gain >= 0 ? '+' : ''}{money(s.gain)}</b>} strong />
             {s.roiPct !== undefined && <KV label={t('Sarmoyaga nisbatan (ROI)', 'Рентабельность (ROI)')} value={pct(s.roiPct, 0)} />}
           </Card>
           <div className="mt-3 grid gap-3 md:grid-cols-2">
@@ -343,8 +354,8 @@ export function ResultsPanel({ input, goal, result, needs, missing, speciesKey }
                 <div className="text-[11px] text-stone-500">{unit}</div>
                 {hasMoney && (
                   <>
-                    <div className={cx('mt-1 text-sm font-semibold', x.sm.finalWealth < 0 && 'text-red-600')}>{short(x.sm.finalWealth)}</div>
-                    <div className="text-[11px] text-stone-500">{t('qoplanish', 'окупаемость')}: {x.ms.payback !== undefined ? `${x.ms.payback}-${t('oy', 'мес')}` : '—'}</div>
+                    <div className={cx('mt-1 text-sm font-semibold', x.sm.gain < 0 && 'text-red-600')}>{x.sm.gain >= 0 ? '+' : ''}{short(x.sm.gain)}</div>
+                    <div className="text-[11px] text-stone-500">{t('qoplanish', 'окупаемость')}: {x.ms.payback ? `${x.ms.payback}-${t('oy', 'мес')}` : x.ms.payback === 0 ? t('kerak emas', 'не нужна') : '—'}</div>
                   </>
                 )}
               </div>
@@ -356,7 +367,7 @@ export function ResultsPanel({ input, goal, result, needs, missing, speciesKey }
           <div className="my-3 border-t border-stone-100 dark:border-stone-800" />
           {hasMoney && <KV label={t("Zarar ko'rish ehtimoli", 'Вероятность убытка')} value={<b className={mc.lossProb > 0.3 ? 'text-red-600' : ''}>{pct(mc.lossProb * 100, 0)}</b>} />}
           <KV label={t('Kamida bir marta kasallik chiqishi', 'Хотя бы одна вспышка болезни')} value={pct(mc.outbreakProb * 100, 0)} />
-          {hasMoney && <KV label={t('Natija oralig\'i (80%)', 'Диапазон итога (80%)')} value={`${short(mc.finalWealth.p10)} … ${short(mc.finalWealth.p90)}`} />}
+          {hasMoney && <KV label={t('Sof natija oralig\'i (80%)', 'Диапазон итога (80%)')} value={`${short(gainOf(mc.finalWealth.p10))} … ${short(gainOf(mc.finalWealth.p90))}`} />}
           <KV label={t("Bosh soni oralig'i (80%)", 'Диапазон поголовья (80%)')} value={`${formatNum(mc.finalHeads.p10, 0)} … ${formatNum(mc.finalHeads.p90, 0)}`} />
         </Card>
         {hasMoney && result.sensitivity.length > 0 && (
@@ -375,11 +386,14 @@ export function ResultsPanel({ input, goal, result, needs, missing, speciesKey }
             <p className="text-sm text-stone-500">{t('Hisoblanmoqda…', 'Считаем…')}</p>
           ) : (
             <>
+              {needs.kind && needs.startCount === undefined && (
+                <KV label={t('Maqsad', 'Цель')} value={t(`${needs.months} oyda erishib bo'lmaydi`, `за ${needs.months} мес. недостижимо`)} />
+              )}
               {needs.startCount !== undefined && (
                 <KV
-                  label={goal.needKind === 'heads' || goal.type !== 'need'
-                    ? t(`${goal.byMonth} oyda ${formatNum(goal.heads, 0)} ${unit} uchun boshlang'ich`, `Для ${formatNum(goal.heads, 0)} ${unit} за ${goal.byMonth} мес. нужно на старте`)
-                    : t(`${goal.byMonth} oyda ${short(goal.amount)} uchun boshlang'ich`, `Для ${short(goal.amount)} за ${goal.byMonth} мес. нужно на старте`)}
+                  label={needs.kind === 'heads'
+                    ? t(`${needs.months} oyda ${formatNum(needs.target ?? 0, 0)} ${unit} uchun boshlang'ich`, `Для ${formatNum(needs.target ?? 0, 0)} ${unit} за ${needs.months} мес. нужно на старте`)
+                    : t(`${needs.months} oyda ${short(needs.target ?? 0)} uchun boshlang'ich`, `Для ${short(needs.target ?? 0)} за ${needs.months} мес. нужно на старте`)}
                   value={<b>{needs.startCount} {startUnit(t, input)}</b>}
                 />
               )}
@@ -612,7 +626,7 @@ function recommendations(t: T, money: (n: number) => string, i: ForecastInput, r
     const feedShare = s.cost > 0 ? s.costBy.feed / s.cost : 0
     if (feedShare > 0.5)
       out.push({ tone: 'warn', text: t(`Xarajatlarning ${Math.round(feedShare * 100)}% — yem. Yemni mavsumida ulgurji olish, o'zingiz yetishtirish yoki yaylovdan ko'proq foydalanish foydani sezilarli oshiradi.`, `${Math.round(feedShare * 100)}% расходов — корм. Закупка оптом в сезон, своё производство или пастбище заметно повысят прибыль.`) })
-    if (r.milestones.payback === undefined && s.finalWealth > 0 && s.finalHerdValue > 0)
+    if (r.milestones.payback === undefined && s.gain > 0 && s.finalHerdValue > 0)
       out.push({
         tone: 'info',
         text: t(

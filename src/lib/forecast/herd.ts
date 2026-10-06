@@ -42,9 +42,16 @@ export function runHerd(i: HerdInput, R: Rand): RunResult {
   const rest = Math.max(1, Math.round(i.birthIntervalMonths) - gest)
 
   let females: FemaleGroup[] = []
-  const open = Math.max(0, i.females - i.pregnant)
-  if (open > 0) females.push({ age: i.femaleAgeMonths, state: 'open', t: 0, n: open })
-  if (i.pregnant > 0) females.push({ age: i.femaleAgeMonths, state: 'preg', t: Math.max(1, Math.min(gest, i.dueInMonths)), n: Math.min(i.pregnant, i.females) })
+  const due = Math.max(1, Math.min(gest, i.dueInMonths))
+  const ages = i.femaleGroups?.length ? i.femaleGroups : [{ ageMonths: i.femaleAgeMonths, count: i.females }]
+  const total = ages.reduce((s, g) => s + g.count, 0)
+  const pregShare = total > 0 ? Math.min(i.pregnant, i.females) / total : 0
+  for (const g of ages) {
+    // bo'g'ozlar yosh guruhlari bo'yicha mutanosib taqsimlanadi
+    const preg = R.det ? g.count * pregShare : Math.round(g.count * pregShare)
+    if (g.count - preg > 0) females.push({ age: g.ageMonths, state: 'open', t: 0, n: g.count - preg })
+    if (preg > 0) females.push({ age: g.ageMonths, state: 'preg', t: due, n: preg })
+  }
   let males = i.males
   let young: YoungCohort[] = i.young.filter((y) => y.females + y.males > 0).map((y) => ({ age: y.ageMonths, f: y.females, m: y.males, keptF: 0 }))
   let lact: { n: number; t: number }[] = []
@@ -84,7 +91,8 @@ export function runHerd(i: HerdInput, R: Rand): RunResult {
         const alive = kids - lost
         const fk = R.binom(alive, 0.5)
         young.push({ age: 0, f: fk, m: alive - fk, keptF: 0 })
-        d.born += alive
+        // tug'ilganlarning hammasi (o'lik tug'ilganlar ham), yo'qotishlar «o'ldi»da
+        d.born += kids
         d.died += lost
         if (i.milkLPerDay > 0 && i.lactationMonths > 0) lact.push({ n: g.n, t: i.lactationMonths })
         next.push({ age: g.age, state: 'rest', t: rest, n: g.n })
@@ -126,10 +134,10 @@ export function runHerd(i: HerdInput, R: Rand): RunResult {
       g.n -= dead
       d.died += dead
     }
+    // o'lgan naslchi almashtiriladi: kiritilgan narxda, bo'lmasa bozor qiymatida (vazn × narx)
     const deadMales = R.binom(males, pA)
     d.died += deadMales
-    if (i.malePrice > 0) d.costs.stock += deadMales * i.malePrice * C
-    else males -= deadMales
+    d.costs.stock += deadMales * (i.malePrice > 0 ? i.malePrice * C : i.adultWeightKg * cullPrice * P)
     for (const y of young) {
       const df = R.binom(y.f, pY)
       const dm = R.binom(y.m, pY)

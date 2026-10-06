@@ -85,7 +85,17 @@ export function importFromFarm(f: Farmx, speciesId: ID, input: ForecastInput, in
         sources.females = 'herd'
         sources.males = 'herd'
         const ages = femalesAdult.filter((a) => a.birthDate).map((a) => ageMonths(a.birthDate!))
-        if (ages.length) set('femaleAgeMonths', Math.round(ages.reduce((a, b) => a + b, 0) / ages.length), 'herd')
+        const avgAge = ages.length ? Math.round(ages.reduce((a, b) => a + b, 0) / ages.length) : input.femaleAgeMonths
+        if (ages.length) set('femaleAgeMonths', avgAge, 'herd')
+        // har bir onaning yoshi (noma'lumlari — o'rtacha yosh)
+        const byFemaleAge = new Map<number, number>()
+        for (const a of femalesAdult) {
+          const age = a.birthDate ? ageMonths(a.birthDate) : avgAge
+          byFemaleAge.set(age, (byFemaleAge.get(age) ?? 0) + 1)
+        }
+        patch.femaleGroups = [...byFemaleAge.entries()].map(([ageMonths, count]) => ({ ageMonths, count }))
+        // ona soni chegarasi podangizdan kam bo'lmasin
+        if (femalesAdult.length > input.maxBreedingFemales) patch.maxBreedingFemales = femalesAdult.length
         // yoshlar yoshi bo'yicha
         const byAge = new Map<number, { females: number; males: number }>()
         for (const a of animals) {

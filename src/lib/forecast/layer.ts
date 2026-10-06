@@ -39,12 +39,17 @@ export function runLayer(i: LayerInput, R: Rand): RunResult {
       const dead = R.binom(n, p)
       n -= dead
       d.died += dead
+      // hammasi nobud bo'lsa — yangi tovuqlar olinadi (yoki tugaydi)
+      if (n <= 1e-9) {
+        n = 0
+        gapLeft = i.restock ? Math.max(1, i.restockGapMonths) : Infinity
+      }
       const eggs = n * (layRate(i, age) / 100) * DAYS * R.factor(0.04)
       d.rev.eggs += eggs * i.eggPrice * P
       d.feedKg = n * i.feedKgPerDay * DAYS
       d.costs.feed += d.feedKg * i.feedPricePerKg * C
       age++
-      if (age >= i.layMonths) {
+      if (n > 0 && age >= i.layMonths) {
         d.rev.culls += n * i.spentHenPrice * P
         d.sold += n
         n = 0

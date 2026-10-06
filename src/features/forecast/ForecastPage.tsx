@@ -12,6 +12,7 @@ import { importFromFarm, type FarmSource } from '../../lib/forecast/fromFarm'
 import { defaultInput, modelsFor } from '../../lib/forecast/presets'
 import type { ForecastInput, ModelKind } from '../../lib/forecast/types'
 import { useForecast } from '../../lib/forecast/useForecast'
+import { isGoalType, sanitizeGoal, sanitizeInput } from '../../lib/forecast/sanitize'
 import { monthKey, today } from '../../lib/dates'
 import { InputsPanel, missingFields } from './InputsPanel'
 import { ResultsPanel } from './ResultsPanel'
@@ -43,7 +44,10 @@ function ForecastPage() {
   )
   const [speciesId, setSpeciesId] = useState<ID>()
   const [input, setInput] = useState<ForecastInput>()
-  const [goal, setGoal] = useState<Goal>({ ...DEFAULT_GOAL, type: (sp.get('goal') as GoalType) || 'profit' })
+  const [goal, setGoal] = useState<Goal>(() => {
+    const g = sp.get('goal')
+    return { ...DEFAULT_GOAL, type: isGoalType(g) ? (g as GoalType) : 'profit' }
+  })
   const [sources, setSources] = useState<Partial<Record<string, FarmSource>>>({})
   const [name, setName] = useState('')
   const [tab, setTab] = useState<'inputs' | 'results'>('inputs')
@@ -78,8 +82,11 @@ function ForecastPage() {
       db.plans.get(id).then((p) => {
         if (!p) return nav('/forecast', { replace: true })
         setSpeciesId(p.speciesId)
-        setInput(p.input as ForecastInput)
-        setGoal({ ...DEFAULT_GOAL, ...(p.goal as Goal) })
+        // eski rejalarda keyin qo'shilgan maydonlar bo'lmasligi mumkin — standart qiymatlar bilan to'ldiramiz
+        const saved = p.input as ForecastInput
+        const key = f.speciesMap.get(p.speciesId)?.key
+        setInput(sanitizeInput(saved, defaultInput(saved.model ?? modelsFor(key)[0], key, startMonth)))
+        setGoal(sanitizeGoal(p.goal as Goal))
         setName(p.name)
         setTab('results')
       })
@@ -105,13 +112,17 @@ function ForecastPage() {
       const next = { ...cur, ...p } as ForecastInput
       // tuxum tovuq: mola narxi ham boshlang'ich xarid narxi
       if (next.model === 'layer' && 'pulletPrice' in p) next.purchasePrice = next.pulletPrice
-      // herd: bo'g'ozlar onalardan ko'p bo'lmaydi
-      if (next.model === 'herd' && next.pregnant > next.females) next.pregnant = next.females
+      // herd: onalar soni qo'lda o'zgartirilsa, fermadan olingan yosh guruhlari bekor qilinadi
+      if (next.model === 'herd' && 'females' in p) next.femaleGroups = undefined
       return next
     })
 
-  const missing = input ? missingFields(input) : []
-  const { result, needs, busy, error } = useForecast(input, goal)
+  // hisob-kitob doim tozalangan nusxa bilan (yozish paytida maydonlar o'zgarib ketmaydi)
+  const defaults = useMemo(() => (input ? defaultInput(input.model, species?.key, startMonth) : undefined), [input?.model, species?.key, startMonth])
+  const clean = useMemo(() => (input && defaults ? sanitizeInput(input, defaults) : undefined), [input, defaults])
+  const cleanGoal = useMemo(() => sanitizeGoal(goal), [goal])
+  const missing = clean ? missingFields(clean) : []
+  const { result, needs, busy, error } = useForecast(clean, cleanGoal)
 
   const chooseSpecies = (s: Species) => {
     setSpeciesId(s.id)
@@ -209,9 +220,8 @@ function ForecastPage() {
               <NumInput
                 value={goal.byMonth}
                 onChange={(v) => {
-                  const m = Math.max(1, Math.min(120, v ?? 1))
-                  setGoal({ ...goal, byMonth: m })
-                  if (m > input.months) set({ months: m })
+                  setGoal({ ...goal, byMonth: v ?? 0 })
+                  if ((v ?? 0) > input.months && (v ?? 0) <= 120) set({ months: v })
                 }}
                 suffix={t('oy', 'мес.')}
               />
@@ -270,7 +280,7 @@ function ForecastPage() {
         {goalParams}
         <Field label={t('Hisob muddati', 'Срок расчёта')} className="mt-3 mb-0">
           <div className="flex gap-2">
-            <NumInput className="w-28" value={input.months} onChange={(v) => set({ months: Math.max(6, Math.min(120, v ?? 36)) })} suffix={t('oy', 'мес.')} />
+            <NumInput className="w-28" value={input.months} onChange={(v) => set({ months: v ?? 0 })} suffix={t('oy', 'мес.')} />
             <div className="no-scrollbar flex flex-1 gap-1 overflow-x-auto">
               {[12, 24, 36, 60, 120].map((m) => (
                 <button key={m} type="button" onClick={() => set({ months: m })} className={cx('h-12 shrink-0 rounded-xl px-3 text-sm', input.months === m ? 'bg-stone-800 text-white dark:bg-stone-200 dark:text-stone-900' : 'bg-stone-100 dark:bg-stone-800')}>
@@ -280,6 +290,9 @@ function ForecastPage() {
             </div>
           </div>
         </Field>
+        {(input.months < 6 || input.months > 120) && (
+          <p className="mt-1 px-1 text-xs text-amber-600">{t(`Muddat 6–120 oy bo'lishi kerak; hisob ${clean?.months} oy bilan qilinmoqda`, `Срок 6–120 мес.; расчёт идёт на ${clean?.months} мес.`)}</p>
+        )}
       </Card>
     </>
   )
@@ -308,7 +321,7 @@ function ForecastPage() {
       {error && <Callout tone="bad">{error}</Callout>}
       {result ? (
         <div className={cx('transition-opacity', busy && 'opacity-60')}>
-          <ResultsPanel input={input} goal={goal} result={result} needs={needs} missing={missing} speciesKey={species?.key} />
+          <ResultsPanel input={clean ?? input} goal={cleanGoal} result={result} needs={needs} missing={missing} speciesKey={species?.key} />
         </div>
       ) : (
         <div className="flex justify-center py-20"><Loader2 className="animate-spin text-brand-600" /></div>

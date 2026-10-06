@@ -45,10 +45,10 @@ export const modelHint = (t: T, m: ModelKind) =>
 export const milestoneLabel = (t: T, k: MilestoneKey) =>
   ({
     firstBirth: t("Birinchi tug'ish", 'Первый приплод'),
-    firstSale: t('Birinchi sotuv', 'Первая продажа'),
+    firstSale: t('Birinchi daromad', 'Первый доход'),
     profitable: t('Barqaror foydaga chiqish', 'Устойчивая прибыль'),
     payback: t('Sarmoya to\'liq qaytadi (naqd)', 'Окупаемость (деньгами)'),
-    wealthPositive: t("Hammasini sotsa ham zarar yo'q", 'Без убытка, если продать всё'),
+    wealthPositive: t("Hammasini sotsa ham zarar yo'q (barqaror)", 'Без убытка, если продать всё'),
     heads: t('Maqsad: bosh soni (barqaror)', 'Цель: поголовье (устойчиво)'),
     cash: t("Maqsad: sof foyda", 'Цель: чистая прибыль'),
     monthly: t('Maqsad: oylik daromad', 'Цель: доход в месяц'),
@@ -112,6 +112,7 @@ export const warningLabel = (t: T, w: string) =>
     ),
     noFemales: t("Ona hayvon yo'q — ko'payish bo'lmaydi.", 'Нет маток — приплода не будет.'),
     noPrice: t('Sotish narxi kiritilmagan — pul hisoblari to\'liq emas.', 'Не указана цена продажи — денежный расчёт неполный.'),
+    noHarvest: t("Asal yig'ish oylari tanlanmagan — asal daromadi hisoblanmaydi.", 'Не выбраны месяцы медосбора — доход от мёда не учитывается.'),
   })[w] ?? w
 
 export const MONTHS_SHORT_UZ = ['yan', 'fev', 'mar', 'apr', 'may', 'iyn', 'iyl', 'avg', 'sen', 'okt', 'noy', 'dek']

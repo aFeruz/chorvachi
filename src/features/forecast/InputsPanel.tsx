@@ -156,6 +156,11 @@ export function InputsPanel({ input, set, sources, missing }: { input: ForecastI
             num('males', t('Naslchi (erkak)', 'Производители'), { suffix: t('bosh', 'гол.') }),
             num('femaleAgeMonths', t("Onalar o'rtacha yoshi", 'Средний возраст маток'), { suffix: t('oy', 'мес.') }),
           )}
+          {h.femaleGroups?.length ? (
+            <p className="-mt-1 mb-3 text-xs text-brand-700 dark:text-brand-400">
+              {t(`Har bir onaning yoshi fermadan olingan (${h.femaleGroups.length} xil yosh) — qari onalar o'z vaqtida almashtiriladi.`, `Возраст каждой матки взят из фермы (${h.femaleGroups.length} групп).`)}
+            </p>
+          ) : null}
           <YoungEditor input={h} set={set} />
           <Toggle checked={h.buyStart} onChange={(x) => set({ buyStart: x })} label={t('Bu hayvonlar endi sotib olinadi', 'Эти животные покупаются сейчас')} />
           {h.buyStart && grid(
@@ -208,7 +213,7 @@ export function InputsPanel({ input, set, sources, missing }: { input: ForecastI
           {grid(num('sellAgeMonths', t('Bolalarni sotish yoshi', 'Возраст продажи молодняка'), { suffix: t('oy', 'мес.') }))}
           <Toggle checked={h.keepFemales} onChange={(x) => set({ keepFemales: x })} label={t("Urg'ochi bolalarni podada qoldirish", 'Оставлять самок в стаде')} />
           {grid(
-            h.keepFemales && num('maxBreedingFemales', t('Onalar soni chegarasi', 'Предел маток'), { suffix: t('bosh', 'гол.') }),
+            h.keepFemales && num('maxBreedingFemales', t('Onalar soni chegarasi', 'Предел маток'), { suffix: t('bosh', 'гол.'), hint: t("shundan ko'pi sotiladi", 'сверх — на продажу') }),
             num('maxHeads', t("Joy sig'imi (jami)", 'Вместимость (всего)'), { suffix: t('bosh', 'гол.'), hint: t('0 = cheklanmagan', '0 = без ограничений') }),
           )}
         </Fold>

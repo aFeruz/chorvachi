@@ -10,7 +10,9 @@ export function runApiary(i: ApiaryInput, R: Rand): RunResult {
   const rows: MonthRow[] = []
   const warnings: string[] = []
   if (i.honeyPricePerKg <= 0) warnings.push('noPrice')
-  const harvest = i.harvestMonths.length ? i.harvestMonths : [7]
+  // asal yig'ish oyi tanlanmasa — asal hisoblanmaydi
+  const harvest = i.harvestMonths
+  if (!harvest.length) warnings.push('noHarvest')
   let seasonYield = R.factor(0.3)
 
   for (let m = 1; m <= i.months; m++) {
@@ -18,7 +20,7 @@ export function runApiary(i: ApiaryInput, R: Rand): RunResult {
     const P = eco.price(m)
     const C = eco.cost(m)
     const d = draft()
-    if (cal === harvest[0]) seasonYield = R.factor(0.3)
+    if (harvest.length && cal === harvest[0]) seasonYield = R.factor(0.3)
 
     if (cal === i.winterMonth) {
       const lost = R.binom(c, i.winterLossPct / 100)
@@ -28,10 +30,10 @@ export function runApiary(i: ApiaryInput, R: Rand): RunResult {
     const ev = R.event(monthlyProb(i.diseaseRiskPct))
     d.outbreak = ev
     if (ev > 0) {
+      d.costs.disease += ev * c * i.diseaseCostPerHead * C
       const lost = R.binom(c, (ev * i.diseaseLossPct) / 100)
       c -= lost
       d.died += lost
-      d.costs.disease += ev * c * i.diseaseCostPerHead * C
     }
     if (cal === i.splitMonth && c > 0) {
       const born = R.binom(c, i.splitPct / 100)
