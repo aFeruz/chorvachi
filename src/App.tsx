@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect } from 'react'
 import { HashRouter, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { SettingsProvider, useSettings } from './state/settings'
+import { LockProvider } from './state/lock'
 import { FarmProvider } from './state/farm'
 import { UiProvider } from './components/ui'
 import { Shell } from './components/Shell'
@@ -119,9 +120,11 @@ export default function App() {
   return (
     <SettingsProvider fallback={<Splash />}>
       <UiProvider>
-        <HashRouter>
-          <Gate />
-        </HashRouter>
+        <LockProvider>
+          <HashRouter>
+            <Gate />
+          </HashRouter>
+        </LockProvider>
       </UiProvider>
     </SettingsProvider>
   )

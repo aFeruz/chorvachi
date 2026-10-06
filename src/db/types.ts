@@ -275,6 +275,11 @@ export interface Settings {
   notifications: boolean
   /** "Avtomatik sozlash" ishlatilgan yoki taklif yopilgan */
   setupDone?: boolean
+  /** PIN-kod (SHA-256 xesh, tuz bilan). Bo'lmasa — qulf yo'q */
+  pinHash?: string
+  pinSalt?: string
+  /** ilova fonga o'tgandan necha daqiqadan keyin qulflanadi (0 — darhol, -1 — faqat ochilganda) */
+  autoLockMinutes?: number
 }
 
 export const DEFAULT_SETTINGS: Settings = {

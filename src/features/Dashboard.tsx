@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Baby, Bell, Calculator, ChevronRight, Minus, PawPrint, Plus, TrendingDown, TrendingUp, Wand2, X } from 'lucide-react'
+import { Baby, Bell, Calculator, ChevronRight, Lock, Minus, PawPrint, Plus, TrendingDown, TrendingUp, Wand2, X } from 'lucide-react'
 import { useFarm } from '../state/farm'
 import { useSettings } from '../state/settings'
 import { Badge, Card, Chips, cx, IconButton, List, ListRow, Money, Page, Section, Stat } from '../components/ui'
@@ -9,6 +9,7 @@ import { startOfMonth, startOfYear, today, formatDate } from '../lib/dates'
 import { computeReminders, dueLabel } from '../lib/reminders'
 import { TxRow } from './finance/TxRow'
 import { IconTile, SpeciesAvatar } from '../components/icons'
+import { useLock } from '../state/lock'
 
 type Period = 'month' | 'year' | 'all'
 
@@ -17,6 +18,7 @@ export function Dashboard() {
   const { t, lt, short, settings, update } = useSettings()
   const nav = useNavigate()
   const [period, setPeriod] = useState<Period>('month')
+  const { hasPin, lock } = useLock()
 
   const from = period === 'month' ? startOfMonth(today()) : period === 'year' ? startOfYear(today()) : '1900-01-01'
   const allFrom = useMemo(() => {
@@ -46,6 +48,12 @@ export function Dashboard() {
         </span>
       }
       actions={
+        <>
+        {hasPin && (
+          <IconButton onClick={lock} aria-label="lock">
+            <Lock size={20} />
+          </IconButton>
+        )}
         <IconButton onClick={() => nav('/reminders')} aria-label="reminders" className="relative">
           <Bell size={22} />
           {urgent.length > 0 && (
@@ -54,6 +62,7 @@ export function Dashboard() {
             </span>
           )}
         </IconButton>
+        </>
       }
     >
       {!settings.setupDone && (

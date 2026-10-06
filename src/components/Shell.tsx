@@ -1,13 +1,15 @@
 import type { ReactNode } from 'react'
 import { NavLink } from 'react-router-dom'
-import { BarChart3, Home, Menu, PawPrint, Wallet } from 'lucide-react'
+import { BarChart3, Home, LogOut, Menu, PawPrint, Wallet } from 'lucide-react'
 import { useSettings } from '../state/settings'
 import { useFarm } from '../state/farm'
 import { cx } from './ui'
+import { useLock } from '../state/lock'
 
 export function Shell({ children }: { children: ReactNode }) {
   const { t } = useSettings()
   const { farm } = useFarm()
+  const { lock } = useLock()
   const items = [
     { to: '/', icon: Home, label: t('Asosiy', 'Главная'), end: true },
     { to: '/herd', icon: PawPrint, label: t('Poda', 'Стадо') },
@@ -43,6 +45,14 @@ export function Shell({ children }: { children: ReactNode }) {
             </NavLink>
           ))}
         </nav>
+        <button
+          type="button"
+          onClick={lock}
+          className="mt-auto flex items-center gap-3 rounded-xl px-3 py-2.5 font-medium text-red-600 transition hover:bg-red-50 dark:hover:bg-red-950/40"
+        >
+          <LogOut size={20} />
+          {t('Chiqish', 'Выйти')}
+        </button>
       </aside>
       {children}
       <nav className="no-print pb-safe fixed inset-x-0 bottom-0 z-30 border-t border-stone-200 bg-white/95 backdrop-blur md:hidden dark:border-stone-800 dark:bg-stone-900/95">

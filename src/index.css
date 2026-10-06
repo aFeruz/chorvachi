@@ -72,3 +72,9 @@ input[type='number']::-webkit-outer-spin-button {
   .no-print { display: none !important; }
   body { background: white; color: black; }
 }
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-8px); }
+  40%, 80% { transform: translateX(8px); }
+}

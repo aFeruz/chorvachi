@@ -46,7 +46,7 @@ export function AboutPage() {
         <img src="./favicon.svg" className="size-16" alt="" />
         <div>
           <div className="text-xl font-bold">Chorva Hisob</div>
-          <div className="text-sm text-stone-500">v1.3 · {t('offline chorvachilik hisobi', 'офлайн учёт животноводства')}</div>
+          <div className="text-sm text-stone-500">v1.4 · {t('offline chorvachilik hisobi', 'офлайн учёт животноводства')}</div>
         </div>
       </Card>
       {items.map(([q, a]) => (

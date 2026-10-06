@@ -1,14 +1,16 @@
 import { useNavigate } from 'react-router-dom'
-import { Bell, Calculator, ChevronRight, DatabaseBackup, Heart, House, Info, Milk, PawPrint, Settings, Syringe, Tags, TrendingUp, Wand2, Wheat, type LucideIcon } from 'lucide-react'
+import { Bell, Calculator, ChevronRight, DatabaseBackup, Heart, House, Info, LogOut, Milk, PawPrint, Settings, Syringe, Tags, TrendingUp, Wand2, Wheat, type LucideIcon } from 'lucide-react'
 import { IconTile } from '../../components/icons'
 import { useFarm } from '../../state/farm'
 import { useSettings } from '../../state/settings'
-import { List, ListRow, Page, Section } from '../../components/ui'
+import { Button, List, ListRow, Page, Section } from '../../components/ui'
+import { useLock } from '../../state/lock'
 
 export function MorePage() {
   const { t } = useSettings()
   const f = useFarm()
   const nav = useNavigate()
+  const { hasPin, lock } = useLock()
   const row = (icon: LucideIcon, color: string, title: string, sub: string, to: string) => (
     <ListRow key={to} left={<IconTile icon={icon} color={color} />} title={title} sub={sub} onClick={() => nav(to)} right={<ChevronRight size={18} className="text-stone-400" />} />
   )
@@ -36,6 +38,14 @@ export function MorePage() {
           {row(Info, '#2563eb', t('Ilova haqida', 'О приложении'), t('Qanday hisoblanadi', 'Как считается'), '/about')}
         </List>
       </Section>
+      <Button variant="secondary" full size="lg" className="mb-2 text-red-600" icon={<LogOut size={20} />} onClick={lock}>
+        {t('Chiqish', 'Выйти')}
+      </Button>
+      <p className="mb-6 px-1 text-center text-xs text-stone-500">
+        {hasPin
+          ? t("Ilova qulflanadi — qayta kirish uchun PIN-kod so'raladi.", 'Приложение заблокируется — для входа нужен PIN-код.')
+          : t("Chiqish uchun avval PIN-kod o'rnatiladi.", 'Для выхода сначала установите PIN-код.')}
+      </p>
     </Page>
   )
 }

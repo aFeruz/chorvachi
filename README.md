@@ -116,6 +116,7 @@ Chorvachilikdagi eng muhim savollarga javob beradi:
 
 ### Boshqa
 - Telefonga eslatmalar (Android bildirishnomalari)
+- **PIN-kod bilan qulf va «Chiqish»**: ilova ochilganda va boshqa ilovaga o'tib qaytganda PIN so'raladi (avtomatik qulflash vaqti tanlanadi); PIN ochiq saqlanmaydi (SHA-256 xesh), 5 marta xatodan keyin 30 soniya kutish
 - JSON zaxira va tiklash, yorug' va qorong'i rejim
 - Namuna (demo) ma'lumotlar bilan sinab ko'rish
 
