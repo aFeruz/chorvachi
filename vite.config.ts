@@ -18,7 +18,7 @@ export default defineConfig({
         short_name: 'Chorva Hisob',
         description: 'Chorvachilik xarajat va foyda hisobi',
         theme_color: '#15803d',
-        background_color: '#f6f7f4',
+        background_color: '#e8eeea',
         display: 'standalone',
         start_url: './',
         icons: [

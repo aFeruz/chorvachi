@@ -26,7 +26,7 @@ export function CategoryGrid({
             onClick={() => onChange(c.id)}
             className={cx(
               'flex items-center gap-1.5 rounded-xl border px-3 py-2 text-sm transition',
-              value === c.id ? 'border-transparent text-white shadow' : 'border-stone-300 bg-white dark:border-stone-700 dark:bg-stone-900',
+              value === c.id ? 'border-transparent text-white shadow' : 'border-glass-line bg-white/55 dark:bg-white/5',
             )}
             style={value === c.id ? { background: c.color } : undefined}
           >

@@ -53,21 +53,21 @@ export function Onboarding() {
                 onClick={() => update({ lang: l })}
                 className={cx(
                   'rounded-2xl border-2 p-4 text-left font-semibold transition',
-                  settings.lang === l ? 'border-brand-600 bg-brand-50 dark:bg-brand-900/30' : 'border-stone-200 bg-white dark:border-stone-800 dark:bg-stone-900',
+                  settings.lang === l ? 'border-brand-600 bg-brand-50 dark:bg-brand-900/30' : 'border-glass-line bg-white/55 dark:bg-white/5',
                 )}
               >
-                <span className="flex items-center gap-3"><span className="grid size-8 place-items-center rounded-lg bg-stone-200 text-xs font-bold dark:bg-stone-700">{l.toUpperCase()}</span>{l === 'uz' ? "O'zbekcha" : 'Русский'}</span>
+                <span className="flex items-center gap-3"><span className="grid size-8 place-items-center rounded-lg bg-white/80 text-xs font-bold dark:bg-white/10">{l.toUpperCase()}</span>{l === 'uz' ? "O'zbekcha" : 'Русский'}</span>
               </button>
             ))}
           </div>
           <ul className="mb-8 space-y-3 text-sm">
             {([
               [Calculator, '#027a48', t('Har bir hayvon va poda tannarxi avtomatik hisoblanadi', 'Себестоимость каждого животного считается автоматически')],
-              [HandCoins, '#b45309', t("Necha pulga sotsangiz foyda qilishingizni ko'rsatadi", 'Показывает, за сколько продать, чтобы быть в прибыли')],
-              [Baby, '#db2777', t("Tug'ilgan bolalar podaga o'zi qo'shiladi", 'Приплод сам добавляется в стадо')],
-              [WifiOff, '#0369a1', t("Internetsiz ishlaydi, ma'lumotlar telefonda saqlanadi", 'Работает без интернета, данные хранятся на телефоне')],
+              [HandCoins, '#027a48', t("Necha pulga sotsangiz foyda qilishingizni ko'rsatadi", 'Показывает, за сколько продать, чтобы быть в прибыли')],
+              [Baby, '#027a48', t("Tug'ilgan bolalar podaga o'zi qo'shiladi", 'Приплод сам добавляется в стадо')],
+              [WifiOff, '#027a48', t("Internetsiz ishlaydi, ma'lumotlar telefonda saqlanadi", 'Работает без интернета, данные хранятся на телефоне')],
             ] as const).map(([I, c, x]) => (
-              <li key={x} className="flex items-center gap-3 rounded-xl bg-white p-3 shadow-sm dark:bg-stone-900">
+              <li key={x} className="flex items-center gap-3 glass rounded-2xl border border-glass-line p-3">
                 <IconTile icon={I} color={c} size="sm" />
                 {x}
               </li>
@@ -106,7 +106,7 @@ export function Onboarding() {
                   }}
                   className={cx(
                     'flex flex-col items-center gap-1 rounded-2xl border-2 p-3 text-center text-xs font-medium transition',
-                    on ? 'border-brand-600 bg-brand-50 dark:bg-brand-900/30' : 'border-stone-200 bg-white dark:border-stone-800 dark:bg-stone-900',
+                    on ? 'border-brand-600 bg-brand-50 dark:bg-brand-900/30' : 'border-glass-line bg-white/55 dark:bg-white/5',
                   )}
                 >
                   <SpeciesAvatar s={s} />

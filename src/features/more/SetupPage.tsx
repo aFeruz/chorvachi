@@ -142,9 +142,9 @@ export function SetupPage() {
   const groups: { key: Item['kind'] | 'income'; title: string; icon: ReactNode; list: Item[] }[] = [
     { key: 'category', title: t('Xarajat turlari', 'Статьи расходов'), icon: <IconTile icon={Tags} color="#dc2626" size="sm" />, list: items.filter((i) => i.kind === 'category' && i.type === 'expense') },
     { key: 'income', title: t('Daromad turlari', 'Статьи доходов'), icon: <IconTile icon={Tags} color="#16a34a" size="sm" />, list: items.filter((i) => i.kind === 'category' && i.type === 'income') },
-    { key: 'feed', title: t('Yem omboriga', 'Корма на склад'), icon: <IconTile icon={Wheat} color="#a16207" size="sm" />, list: items.filter((i) => i.kind === 'feed') },
-    { key: 'ration', title: t('Kunlik ratsion (1 bosh)', 'Суточный рацион (1 гол.)'), icon: <IconTile icon={Wheat} color="#65a30d" size="sm" />, list: items.filter((i) => i.kind === 'ration') },
-    { key: 'health', title: t('Emlash va ishlov eslatmalari', 'Напоминания о вакцинации и обработке'), icon: <IconTile icon={Bell} color="#ea580c" size="sm" />, list: items.filter((i) => i.kind === 'health') },
+    { key: 'feed', title: t('Yem omboriga', 'Корма на склад'), icon: <IconTile icon={Wheat} color="#027a48" size="sm" />, list: items.filter((i) => i.kind === 'feed') },
+    { key: 'ration', title: t('Kunlik ratsion (1 bosh)', 'Суточный рацион (1 гол.)'), icon: <IconTile icon={Wheat} color="#027a48" size="sm" />, list: items.filter((i) => i.kind === 'ration') },
+    { key: 'health', title: t('Emlash va ishlov eslatmalari', 'Напоминания о вакцинации и обработке'), icon: <IconTile icon={Bell} color="#027a48" size="sm" />, list: items.filter((i) => i.kind === 'health') },
   ]
 
   const label = (it: Item): { title: ReactNode; sub?: ReactNode } => {
@@ -194,7 +194,7 @@ export function SetupPage() {
                 }}
                 className={cx(
                   'flex h-10 items-center gap-2 rounded-xl border-2 px-3 text-sm font-medium transition',
-                  on ? 'border-brand-600 bg-brand-50 text-brand-800 dark:bg-brand-900/30 dark:text-brand-200' : 'border-stone-200 bg-white dark:border-stone-800 dark:bg-stone-900',
+                  on ? 'border-brand-600 bg-brand-50 text-brand-800 dark:bg-brand-900/30 dark:text-brand-200' : 'border-glass-line bg-white/55 dark:bg-white/5',
                 )}
               >
                 <SpeciesIcon s={s} size={18} />
@@ -233,7 +233,7 @@ export function SetupPage() {
                     const on = !off.has(it.id)
                     const l = label(it)
                     return (
-                      <button key={it.id} type="button" onClick={() => toggle(it.id)} className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-stone-50 dark:hover:bg-stone-800/50">
+                      <button key={it.id} type="button" onClick={() => toggle(it.id)} className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-white/40 dark:hover:bg-white/5">
                         {on ? <CheckSquare size={22} className="shrink-0 text-brand-600" /> : <Square size={22} className="shrink-0 text-stone-400" />}
                         <span className="min-w-0 flex-1">
                           <span className={cx('block truncate font-medium', !on && 'text-stone-400')}>{l.title}</span>

@@ -20,13 +20,13 @@ export function Page({
   const nav = useNavigate()
   return (
     <div className="min-h-full">
-      <header className="pt-safe sticky top-0 z-20 border-b border-stone-200/70 bg-stone-100/90 backdrop-blur dark:border-stone-800 dark:bg-stone-950/90">
-        <div className={cx('mx-auto flex h-14 items-center gap-2 px-3', wide ? 'max-w-5xl' : 'max-w-3xl')}>
+      <header className="pt-safe glass-bar sticky top-0 z-20 border-b border-glass-line">
+        <div className={cx('mx-auto flex h-16 items-center gap-2 px-4', wide ? 'max-w-5xl' : 'max-w-3xl')}>
           {back && (
             <button
               aria-label="back"
               onClick={() => (typeof back === 'string' ? nav(back) : nav(-1))}
-              className="-ml-1 grid size-10 place-items-center rounded-full hover:bg-stone-200 dark:hover:bg-stone-800"
+              className="glass -ml-1 grid size-11 place-items-center rounded-full border border-glass-line transition active:scale-95"
             >
               <ArrowLeft size={22} />
             </button>
@@ -35,7 +35,7 @@ export function Page({
           {actions && <div className="flex items-center gap-1">{actions}</div>}
         </div>
       </header>
-      <main className={cx('mx-auto px-3 pt-3 pb-28 md:pb-10', wide ? 'max-w-5xl' : 'max-w-3xl')}>{children}</main>
+      <main className={cx('mx-auto px-4 pt-4 pb-32 md:pb-10', wide ? 'max-w-5xl' : 'max-w-3xl')}>{children}</main>
     </div>
   )
 }
@@ -47,8 +47,8 @@ export function Card({
     <div
       onClick={onClick}
       className={cx(
-        'rounded-2xl border border-stone-200 bg-white p-4 shadow-sm dark:border-stone-800 dark:bg-stone-900',
-        onClick && 'cursor-pointer transition active:scale-[0.99] hover:border-stone-300 dark:hover:border-stone-700',
+        'glass rounded-3xl border border-glass-line p-4',
+        onClick && 'cursor-pointer transition active:scale-[0.99] hover:bg-white/70 dark:hover:bg-white/10',
         className,
       )}
     >
@@ -62,7 +62,7 @@ export function Section({ title, action, children, className }: { title?: ReactN
     <section className={cx('mb-5', className)}>
       {(title || action) && (
         <div className="mb-2 flex items-center justify-between px-1">
-          <h2 className="text-sm font-semibold tracking-wide text-stone-500 uppercase dark:text-stone-400">{title}</h2>
+          <h2 className="text-base font-bold text-stone-800 dark:text-stone-200">{title}</h2>
           {action}
         </div>
       )}
@@ -82,14 +82,14 @@ export function Button({
     <button
       {...rest}
       className={cx(
-        'inline-flex items-center justify-center gap-2 rounded-xl font-medium transition select-none disabled:opacity-50 active:scale-[0.98]',
+        'inline-flex items-center justify-center gap-2 rounded-2xl font-medium transition select-none disabled:opacity-50 active:scale-[0.98]',
         size === 'sm' && 'h-9 px-3 text-sm',
         size === 'md' && 'h-11 px-4',
         size === 'lg' && 'h-13 px-5 text-lg',
-        variant === 'primary' && 'bg-brand-700 text-white hover:bg-brand-800 dark:bg-brand-600 dark:hover:bg-brand-700',
-        variant === 'secondary' && 'border border-stone-300 bg-white hover:bg-stone-50 dark:border-stone-700 dark:bg-stone-900 dark:hover:bg-stone-800',
-        variant === 'ghost' && 'hover:bg-stone-200/70 dark:hover:bg-stone-800',
-        variant === 'soft' && 'bg-brand-50 text-brand-800 hover:bg-brand-100 dark:bg-brand-900/40 dark:text-brand-200',
+        variant === 'primary' && 'bg-brand-700 text-white shadow-sm shadow-brand-900/20 hover:bg-brand-800 dark:bg-brand-600 dark:hover:bg-brand-700',
+        variant === 'secondary' && 'glass border border-glass-line hover:bg-white/75 dark:hover:bg-white/10',
+        variant === 'ghost' && 'hover:bg-white/60 dark:hover:bg-white/10',
+        variant === 'soft' && 'bg-brand-100/70 text-brand-800 hover:bg-brand-100 dark:bg-brand-900/40 dark:text-brand-200',
         variant === 'danger' && 'bg-red-600 text-white hover:bg-red-700',
         full && 'w-full',
         className,
@@ -105,7 +105,7 @@ export function IconButton({ className, children, ...rest }: ButtonHTMLAttribute
   return (
     <button
       {...rest}
-      className={cx('grid size-10 place-items-center rounded-full hover:bg-stone-200 disabled:opacity-40 dark:hover:bg-stone-800', className)}
+      className={cx('grid size-10 place-items-center rounded-full hover:bg-white/60 disabled:opacity-40 dark:hover:bg-white/10', className)}
     >
       {children}
     </button>
@@ -115,7 +115,7 @@ export function IconButton({ className, children, ...rest }: ButtonHTMLAttribute
 /* ---------------- Forma ---------------- */
 
 const inputCls =
-  'w-full h-12 rounded-xl border border-stone-300 bg-white px-3 text-base outline-none transition placeholder:text-stone-400 focus:border-brand-600 focus:ring-2 focus:ring-brand-600/20 dark:border-stone-700 dark:bg-stone-900'
+  'w-full h-12 rounded-2xl border border-stone-900/10 bg-white/75 px-3 text-base outline-none transition placeholder:text-stone-400 focus:border-brand-600 focus:bg-white/95 focus:ring-2 focus:ring-brand-600/20 dark:border-white/10 dark:bg-white/5 dark:focus:bg-white/10'
 
 export function Field({ label, hint, children, className }: { label?: ReactNode; hint?: ReactNode; children: ReactNode; className?: string }) {
   return (
@@ -210,15 +210,18 @@ export function Segmented<V extends string>({
   value, onChange, options, className,
 }: { value: V; onChange: (v: V) => void; options: { value: V; label: ReactNode }[]; className?: string }) {
   return (
-    <div className={cx('no-scrollbar flex gap-1 overflow-x-auto rounded-xl bg-stone-200/70 p-1 dark:bg-stone-800', className)}>
+    <div className={cx('no-scrollbar glass flex gap-1 overflow-x-auto rounded-full border border-glass-line p-1', className)}>
       {options.map((o) => (
         <button
           key={o.value}
           type="button"
+          aria-pressed={value === o.value}
           onClick={() => onChange(o.value)}
           className={cx(
-            'min-h-9 flex-1 rounded-lg px-3 text-sm font-medium whitespace-nowrap transition',
-            value === o.value ? 'bg-white shadow-sm dark:bg-stone-950' : 'text-stone-600 dark:text-stone-400',
+            'min-h-10 flex-1 rounded-full px-3 text-sm whitespace-nowrap transition',
+            value === o.value
+              ? 'bg-white/95 font-semibold text-stone-900 shadow-sm dark:bg-white/15 dark:text-white'
+              : 'font-medium text-stone-600 dark:text-stone-300',
           )}
         >
           {o.label}
@@ -232,17 +235,18 @@ export function Chips<V extends string>({
   value, onChange, options,
 }: { value: V; onChange: (v: V) => void; options: { value: V; label: ReactNode }[] }) {
   return (
-    <div className="no-scrollbar -mx-3 mb-3 flex gap-2 overflow-x-auto px-3">
+    <div className="no-scrollbar -mx-4 mb-3 flex gap-2 overflow-x-auto px-4">
       {options.map((o) => (
         <button
           key={o.value}
           type="button"
+          aria-pressed={value === o.value}
           onClick={() => onChange(o.value)}
           className={cx(
-            'h-9 shrink-0 rounded-full border px-3 text-sm whitespace-nowrap transition',
+            'h-10 shrink-0 rounded-full border px-4 text-sm whitespace-nowrap transition',
             value === o.value
-              ? 'border-brand-700 bg-brand-700 text-white dark:border-brand-600 dark:bg-brand-600'
-              : 'border-stone-300 bg-white dark:border-stone-700 dark:bg-stone-900',
+              ? 'border-brand-700 bg-brand-700 font-medium text-white dark:border-brand-600 dark:bg-brand-600'
+              : 'border-glass-line bg-white/55 dark:bg-white/5',
           )}
         >
           {o.label}
@@ -256,7 +260,7 @@ export function Toggle({ checked, onChange, label }: { checked: boolean; onChang
   return (
     <button type="button" onClick={() => onChange(!checked)} className="mb-3 flex w-full items-center justify-between gap-3 text-left">
       <span className="text-sm">{label}</span>
-      <span className={cx('relative h-7 w-12 shrink-0 rounded-full transition', checked ? 'bg-brand-600' : 'bg-stone-300 dark:bg-stone-700')}>
+      <span className={cx('relative h-7 w-12 shrink-0 rounded-full transition', checked ? 'bg-brand-600' : 'bg-stone-900/20 dark:bg-white/20')}>
         <span className={cx('absolute top-1 size-5 rounded-full bg-white shadow transition-all', checked ? 'left-6' : 'left-1')} />
       </span>
     </button>
@@ -305,7 +309,7 @@ export function Badge({ children, tone = 'neutral' }: { children: ReactNode; ton
     <span
       className={cx(
         'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium whitespace-nowrap',
-        tone === 'neutral' && 'bg-stone-200 text-stone-700 dark:bg-stone-800 dark:text-stone-300',
+        tone === 'neutral' && 'bg-white/70 text-stone-700 dark:bg-white/10 dark:text-stone-300',
         tone === 'green' && 'bg-brand-100 text-brand-800 dark:bg-brand-900/50 dark:text-brand-300',
         tone === 'red' && 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300',
         tone === 'amber' && 'bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300',
@@ -326,7 +330,7 @@ export function ListRow({
       onClick={onClick}
       className={cx(
         'flex items-center gap-3 px-4 py-3',
-        onClick && 'cursor-pointer hover:bg-stone-50 active:bg-stone-100 dark:hover:bg-stone-800/50',
+        onClick && 'cursor-pointer hover:bg-white/40 active:bg-white/60 dark:hover:bg-white/5 dark:active:bg-white/10',
         className,
       )}
     >
@@ -342,7 +346,7 @@ export function ListRow({
 
 export function List({ children, className }: { children: ReactNode; className?: string }) {
   return (
-    <div className={cx('divide-y divide-stone-100 overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm dark:divide-stone-800 dark:border-stone-800 dark:bg-stone-900', className)}>
+    <div className={cx('glass divide-y divide-white/70 overflow-hidden rounded-3xl border border-glass-line dark:divide-white/5', className)}>
       {children}
     </div>
   )
@@ -351,7 +355,7 @@ export function List({ children, className }: { children: ReactNode; className?:
 export function Empty({ icon, title, text, action }: { icon?: ReactNode; title: ReactNode; text?: ReactNode; action?: ReactNode }) {
   return (
     <div className="flex flex-col items-center px-6 py-12 text-center">
-      {icon && <div className="mb-4 grid size-16 place-items-center rounded-2xl bg-stone-200/70 text-stone-500 dark:bg-stone-800 dark:text-stone-400">{icon}</div>}
+      {icon && <div className="glass mb-4 grid size-16 place-items-center rounded-3xl border border-glass-line text-stone-500 dark:text-stone-400">{icon}</div>}
       <div className="text-lg font-semibold">{title}</div>
       {text && <div className="mt-1 max-w-sm text-sm text-stone-500">{text}</div>}
       {action && <div className="mt-5">{action}</div>}
@@ -372,11 +376,11 @@ export function Callout({ tone = 'info', children, icon }: { tone?: 'info' | 'wa
   return (
     <div
       className={cx(
-        'flex gap-3 rounded-2xl p-3 text-sm',
-        tone === 'info' && 'bg-sky-50 text-sky-900 dark:bg-sky-950/50 dark:text-sky-200',
-        tone === 'warn' && 'bg-amber-50 text-amber-900 dark:bg-amber-950/50 dark:text-amber-200',
-        tone === 'good' && 'bg-brand-50 text-brand-900 dark:bg-brand-950/50 dark:text-brand-200',
-        tone === 'bad' && 'bg-red-50 text-red-900 dark:bg-red-950/50 dark:text-red-200',
+        'flex gap-3 rounded-3xl border p-3 text-sm',
+        tone === 'info' && 'border-sky-100/80 bg-sky-50/80 text-sky-900 dark:border-sky-900/40 dark:bg-sky-950/50 dark:text-sky-200',
+        tone === 'warn' && 'border-amber-100/80 bg-amber-50/80 text-amber-900 dark:border-amber-900/40 dark:bg-amber-950/50 dark:text-amber-200',
+        tone === 'good' && 'border-brand-100/80 bg-brand-50/80 text-brand-900 dark:border-brand-900/40 dark:bg-brand-950/50 dark:text-brand-200',
+        tone === 'bad' && 'border-red-100/80 bg-red-50/80 text-red-900 dark:border-red-900/40 dark:bg-red-950/50 dark:text-red-200',
       )}
     >
       {icon && <div className="shrink-0 pt-0.5">{icon}</div>}
@@ -390,7 +394,7 @@ export function Fab({ onClick, icon, label }: { onClick: () => void; icon: React
     <button
       onClick={onClick}
       aria-label={label}
-      className="no-print fixed right-4 bottom-[calc(env(safe-area-inset-bottom)+5.5rem)] z-30 flex h-14 items-center gap-2 rounded-2xl bg-brand-700 px-5 text-white shadow-lg shadow-brand-900/20 transition active:scale-95 md:bottom-8 dark:bg-brand-600"
+      className="no-print fixed right-4 bottom-[calc(env(safe-area-inset-bottom)+6.25rem)] z-30 flex h-14 items-center gap-2 rounded-[22px] bg-brand-700 px-5 text-white shadow-lg shadow-brand-900/25 transition active:scale-95 md:bottom-8 dark:bg-brand-600"
     >
       {icon}
       {label && <span className="font-medium">{label}</span>}
@@ -409,12 +413,12 @@ export function Sheet({ open, onClose, title, children }: { open: boolean; onClo
   }, [open, onClose])
   if (!open) return null
   return (
-    <div className="animate-fade fixed inset-0 z-50 flex items-end justify-center bg-black/40 md:items-center" onClick={onClose}>
+    <div className="animate-fade fixed inset-0 z-50 flex items-end justify-center bg-stone-950/35 md:items-center" onClick={onClose}>
       <div
-        className="animate-sheet pb-safe max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-t-3xl bg-white p-4 shadow-xl md:rounded-3xl dark:bg-stone-900"
+        className="glass-sheet animate-sheet pb-safe max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-t-[28px] border-t border-glass-line p-4 md:rounded-[28px] md:border"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="mx-auto mb-3 h-1.5 w-10 rounded-full bg-stone-300 md:hidden dark:bg-stone-700" />
+        <div className="mx-auto mb-3 h-1.5 w-10 rounded-full bg-stone-400/50 md:hidden" />
         {title && (
           <div className="mb-3 flex items-center justify-between">
             <h3 className="text-lg font-semibold">{title}</h3>
@@ -466,8 +470,8 @@ export function UiProvider({ children }: { children: ReactNode }) {
     <UiContext.Provider value={{ confirm, toast }}>
       {children}
       {dlg && (
-        <div className="animate-fade fixed inset-0 z-[60] grid place-items-center bg-black/40 p-6" onClick={() => close(false)}>
-          <div className="w-full max-w-sm rounded-3xl bg-white p-5 shadow-xl dark:bg-stone-900" onClick={(e) => e.stopPropagation()}>
+        <div className="animate-fade fixed inset-0 z-[60] grid place-items-center bg-stone-950/35 p-6" onClick={() => close(false)}>
+          <div className="glass-sheet w-full max-w-sm rounded-[28px] border border-glass-line p-5" onClick={(e) => e.stopPropagation()}>
             <div className="text-lg font-semibold">{dlg.title}</div>
             {dlg.text && <div className="mt-2 text-sm text-stone-600 dark:text-stone-400">{dlg.text}</div>}
             <div className="mt-5 flex justify-end gap-2">
@@ -483,7 +487,7 @@ export function UiProvider({ children }: { children: ReactNode }) {
       )}
       {msg && (
         <div className="animate-fade pointer-events-none fixed inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+6rem)] z-[70] flex justify-center px-4 md:bottom-8">
-          <div className="flex items-center gap-2 rounded-2xl bg-stone-900 px-4 py-3 text-sm text-white shadow-lg dark:bg-stone-100 dark:text-stone-900">
+          <div className="flex items-center gap-2 rounded-full bg-stone-900/90 px-5 py-3 text-sm text-white shadow-lg backdrop-blur dark:bg-stone-100/90 dark:text-stone-900">
             <Check size={18} />
             {msg}
           </div>

@@ -235,7 +235,7 @@ function ForecastPage() {
   const top = (
     <>
       {/* Tur va model */}
-      <div className="no-scrollbar -mx-3 mb-3 flex gap-2 overflow-x-auto px-3">
+      <div className="no-scrollbar -mx-4 mb-3 flex gap-2 overflow-x-auto px-4">
         {speciesList.map((s) => (
           <button
             key={s.id}
@@ -243,7 +243,7 @@ function ForecastPage() {
             onClick={() => chooseSpecies(s)}
             className={cx(
               'flex h-10 shrink-0 items-center gap-2 rounded-xl border-2 px-3 text-sm font-medium transition',
-              s.id === speciesId ? 'border-brand-600 bg-brand-50 text-brand-800 dark:bg-brand-900/30 dark:text-brand-200' : 'border-stone-200 bg-white dark:border-stone-800 dark:bg-stone-900',
+              s.id === speciesId ? 'border-brand-600 bg-brand-50 text-brand-800 dark:bg-brand-900/30 dark:text-brand-200' : 'border-glass-line bg-white/55 dark:bg-white/5',
             )}
           >
             <SpeciesIcon s={s} size={18} />
@@ -269,7 +269,7 @@ function ForecastPage() {
               onClick={() => setGoal({ ...goal, type: g })}
               className={cx(
                 'rounded-xl border px-3 py-2 text-left text-sm transition',
-                goal.type === g ? 'border-brand-600 bg-brand-600 text-white' : 'border-stone-200 bg-stone-50 dark:border-stone-700 dark:bg-stone-800',
+                goal.type === g ? 'border-brand-600 bg-brand-600 text-white' : 'border-glass-line bg-white/55 dark:bg-white/5',
               )}
             >
               {goalLabel(t, g)}
@@ -283,7 +283,7 @@ function ForecastPage() {
             <NumInput className="w-28" value={input.months} onChange={(v) => set({ months: v ?? 0 })} suffix={t('oy', 'мес.')} />
             <div className="no-scrollbar flex flex-1 gap-1 overflow-x-auto">
               {[12, 24, 36, 60, 120].map((m) => (
-                <button key={m} type="button" onClick={() => set({ months: m })} className={cx('h-12 shrink-0 rounded-xl px-3 text-sm', input.months === m ? 'bg-stone-800 text-white dark:bg-stone-200 dark:text-stone-900' : 'bg-stone-100 dark:bg-stone-800')}>
+                <button key={m} type="button" onClick={() => set({ months: m })} className={cx('h-12 shrink-0 rounded-xl px-3 text-sm', input.months === m ? 'bg-stone-800 text-white dark:bg-stone-200 dark:text-stone-900' : 'border border-glass-line bg-white/55 dark:bg-white/5')}>
                   {m >= 12 ? t(`${m / 12} yil`, `${m / 12} г.`) : m}
                 </button>
               ))}

@@ -230,7 +230,7 @@ export function ResultsPanel({ input, goal, result, needs, missing, speciesKey }
                 <Legend wrapperStyle={{ fontSize: 12 }} />
                 <Area dataKey="band" name={t("80% oraliq", '80% диапазон')} fill="#12b76a" fillOpacity={0.15} stroke="none" />
                 <Line dataKey="expected" name={t('Kutilgan (jami)', 'Ожидаемо (всего)')} stroke="#027a48" strokeWidth={2.5} dot={false} />
-                {input.model === 'herd' && <Line dataKey="core" name={t('Onalar', 'Матки')} stroke="#db2777" strokeWidth={1.5} dot={false} />}
+                {input.model === 'herd' && <Line dataKey="core" name={t('Onalar', 'Матки')} stroke="#64748b" strokeWidth={1.5} dot={false} />}
                 {goal.type === 'heads' && <ReferenceLine y={goal.heads} stroke="#f59e0b" strokeDasharray="5 5" label={{ value: t('maqsad', 'цель'), fontSize: 11, fill: '#b45309' }} />}
               </ComposedChart>
             </ResponsiveContainer>
@@ -298,7 +298,7 @@ export function ResultsPanel({ input, goal, result, needs, missing, speciesKey }
       <Section title={t('Nimalar kerak bo\'ladi', 'Что потребуется')}>
         <Card className="space-y-3">
           {hasMoney && (
-            <Req icon={CircleDollarSign} color="#2563eb" title={t("Aylanma mablag'", 'Оборотные средства')}>
+            <Req icon={CircleDollarSign} color="#027a48" title={t("Aylanma mablag'", 'Оборотные средства')}>
               {s.workingCapital > 0 ? (
                 <>
                   {t('Bundan keyin cho\'ntakdan kamida', 'Из кармана потребуется минимум')} <b>{money(s.workingCapital)}</b>{' '}
@@ -310,16 +310,16 @@ export function ResultsPanel({ input, goal, result, needs, missing, speciesKey }
             </Req>
           )}
           {s.feedKgTotal > 0 && (
-            <Req icon={Wheat} color="#a16207" title={t('Yem', 'Корм')}>
+            <Req icon={Wheat} color="#027a48" title={t('Yem', 'Корм')}>
               {t('Birinchi yilda', 'В первый год')} <b>{formatNum(s.feedKgFirstYear / 1000, 1)} {t('tonna', 'т')}</b> ({t("o'rtacha", 'в среднем')} {formatNum(s.feedKgFirstYear / Math.min(12, rows.length), 0)} {t('kg/oy', 'кг/мес.')}), {t('jami', 'всего')} {formatNum(s.feedKgTotal / 1000, 1)} {t('tonna', 'т')}.
             </Req>
           )}
-          <Req icon={Ruler} color="#9a3412" title={t('Joy', 'Помещение')}>
+          <Req icon={Ruler} color="#027a48" title={t('Joy', 'Помещение')}>
             {t('Eng ko\'p', 'Максимум')} <b>{formatNum(s.peakHeads, 0)} {unit}</b> ({when(s.peakMonth)}), {t('ehtiyot bilan', 'с запасом')} {formatNum(mc.peakHeadsP90, 0)}.
             {speciesKey && SPACE_M2[speciesKey] && <> {t('Taxminan', 'Примерно')} <b>{formatNum(Math.ceil(mc.peakHeadsP90 * SPACE_M2[speciesKey]), 0)} m²</b> {t('yopiq joy kerak', 'закрытой площади')}.</>}
           </Req>
           {input.model === 'herd' && (
-            <Req icon={HeartPulse} color="#db2777" title={t('Naslchi', 'Производители')}>
+            <Req icon={HeartPulse} color="#027a48" title={t('Naslchi', 'Производители')}>
               {input.useAI
                 ? t("Sun'iy urug'lantirish tanlangan.", 'Выбрано искусственное осеменение.')
                 : t(`Eng ko'p ${formatNum(Math.max(...rows.map((r) => r.core)), 0)} ona bo'ladi — kamida ${Math.max(1, Math.ceil(Math.max(...rows.map((r) => r.core)) / 30))} ta naslchi kerak (hozir ${input.males}).`, `Маток будет до ${formatNum(Math.max(...rows.map((r) => r.core)), 0)} — нужно минимум ${Math.max(1, Math.ceil(Math.max(...rows.map((r) => r.core)) / 30))} производителей (сейчас ${input.males}).`)}
@@ -345,7 +345,7 @@ export function ResultsPanel({ input, goal, result, needs, missing, speciesKey }
           <div className="grid grid-cols-3 gap-2 text-center">
             {[
               { k: 'bad', label: t('Yomon yil', 'Плохой год'), sm: result.bad, ms: result.badMilestones, cls: 'bg-red-50 dark:bg-red-950/40' },
-              { k: 'base', label: t('Kutilgan', 'Ожидаемо'), sm: s, ms, cls: 'bg-stone-100 dark:bg-stone-800 ring-2 ring-brand-600' },
+              { k: 'base', label: t('Kutilgan', 'Ожидаемо'), sm: s, ms, cls: 'bg-stone-900/5 dark:bg-white/5 ring-2 ring-brand-600' },
               { k: 'good', label: t('Yaxshi yil', 'Хороший год'), sm: result.good, ms: result.goodMilestones, cls: 'bg-brand-50 dark:bg-brand-950/40' },
             ].map((x) => (
               <div key={x.k} className={cx('rounded-2xl p-2.5', x.cls)}>
@@ -506,7 +506,7 @@ function Bars({ items, total }: { items: { label: string; value: number; color: 
               {short(x.value)} <span className="text-xs text-stone-500">{pct(total ? (x.value / total) * 100 : 0, 0)}</span>
             </span>
           </div>
-          <div className="h-2 rounded-full bg-stone-100 dark:bg-stone-800">
+          <div className="h-2 rounded-full bg-stone-900/10 dark:bg-white/10">
             <div className="h-2 rounded-full" style={{ width: `${total ? (x.value / total) * 100 : 0}%`, background: x.color }} />
           </div>
         </div>
@@ -548,7 +548,7 @@ function Tables({ input, result, hasMoney }: { input: ForecastInput; result: For
     <Section title={t('Jadval', 'Таблица')} action={<Button size="sm" variant="ghost" onClick={() => setMonthly(!monthly)} icon={<Scale size={16} />}>{monthly ? t('Yillar', 'По годам') : t('Oylar', 'По месяцам')}</Button>}>
       <Card className="overflow-x-auto p-0">
         <table className="w-full min-w-[560px] text-xs tabular-nums">
-          <thead className="bg-stone-50 text-stone-500 dark:bg-stone-800/50">
+          <thead className="bg-white/50 text-stone-500 dark:bg-white/5">
             <tr>
               <th className="p-2 text-left">{monthly ? t('Oy', 'Мес.') : t('Yil', 'Год')}</th>
               <th className="p-2">{headUnit(t, input)}</th>

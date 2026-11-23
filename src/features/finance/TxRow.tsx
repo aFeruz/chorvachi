@@ -20,7 +20,7 @@ export function TxRow({ kind, e }: { kind: 'expense' | 'income'; e: Expense | In
     <ListRow
       onClick={() => nav(`/${kind}/${e.id}`)}
       left={
-        <span className="grid size-10 place-items-center rounded-xl text-sm font-bold text-white" style={{ background: cat?.color ?? '#94a3b8' }}>
+        <span className="grid size-10 place-items-center rounded-xl text-lg leading-none font-bold" style={{ background: (cat?.color ?? '#64748b') + '1f', color: cat?.color ?? '#64748b' }}>
           {kind === 'income' ? '+' : '−'}
         </span>
       }

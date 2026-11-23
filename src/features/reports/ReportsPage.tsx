@@ -151,7 +151,7 @@ export default function ReportsPage() {
                     <Tooltip formatter={(v) => money(Number(v))} contentStyle={{ borderRadius: 12 }} />
                     <Bar dataKey="income" name={t('Daromad', 'Доход')} fill="#12b76a" radius={[4, 4, 0, 0]} />
                     <Bar dataKey="expense" name={t('Xarajat', 'Расход')} fill="#f04438" radius={[4, 4, 0, 0]} />
-                    <Line dataKey="cumulative" name={t("Jamg'arma natija", 'Нарастающий итог')} stroke="#7a5af8" strokeWidth={2} dot={false} />
+                    <Line dataKey="cumulative" name={t("Jamg'arma natija", 'Нарастающий итог')} stroke="#64748b" strokeWidth={2} dot={false} />
                   </ComposedChart>
                 </ResponsiveContainer>
               </div>
@@ -202,7 +202,7 @@ export default function ReportsPage() {
         <Section title={t('Poda harakati', 'Движение поголовья')}>
           <Card className="overflow-x-auto p-0">
             <table className="w-full min-w-[520px] text-sm">
-              <thead className="bg-stone-50 text-xs text-stone-500 dark:bg-stone-800/50">
+              <thead className="bg-white/50 text-xs text-stone-500 dark:bg-white/5">
                 <tr>
                   <th className="p-2 text-left">{t('Tur', 'Вид')}</th>
                   <th className="p-2">{t('Boshida', 'Начало')}</th>

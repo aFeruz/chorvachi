@@ -123,7 +123,7 @@ export function ExpenseForm() {
           <Field label={t('Miqdori', 'Количество')} className="mb-0">
             <NumInput value={qty} onChange={setQty} decimals suffix={unit} />
           </Field>
-          <div className="col-span-2 rounded-xl bg-stone-200/60 p-3 text-center dark:bg-stone-800">
+          <div className="col-span-2 glass rounded-2xl border border-glass-line p-3 text-center">
             {t('Jami', 'Итого')}: <b className="tabular-nums">{money(total)}</b>
           </div>
         </div>

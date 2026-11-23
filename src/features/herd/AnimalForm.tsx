@@ -94,7 +94,7 @@ export function AnimalForm() {
   return (
     <Page back title={id ? t('Hayvonni tahrirlash', 'Изменить животное') : t("Hayvon qo'shish", 'Добавить животное')}>
       <div className="mb-3 flex items-center gap-4">
-        <label className="relative grid size-20 shrink-0 cursor-pointer place-items-center overflow-hidden rounded-2xl bg-stone-200 dark:bg-stone-800">
+        <label className="relative grid size-20 shrink-0 cursor-pointer place-items-center overflow-hidden rounded-2xl border border-glass-line bg-white/55 dark:bg-white/5">
           {photo ? <img src={photo} className="size-full object-cover" alt="" /> : <Camera className="text-stone-500" />}
           <input
             type="file"
@@ -126,7 +126,7 @@ export function AnimalForm() {
               }}
               className={cx(
                 'flex shrink-0 flex-col items-center rounded-2xl border-2 px-3 py-2 text-xs font-medium',
-                speciesId === s.id ? 'border-brand-600 bg-brand-50 dark:bg-brand-900/30' : 'border-transparent bg-white dark:bg-stone-900',
+                speciesId === s.id ? 'border-brand-600 bg-brand-50 dark:bg-brand-900/30' : 'border-transparent bg-white/55 dark:bg-white/5',
                 id && speciesId !== s.id && 'hidden',
               )}
             >

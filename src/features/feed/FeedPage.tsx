@@ -66,7 +66,7 @@ export function FeedPage() {
               <ListRow
                 key={x.id}
                 onClick={() => setItemId(x.id)}
-                left={<IconTile icon={Wheat} color="#a16207" />}
+                left={<IconTile icon={Wheat} color="#027a48" />}
                 title={x.name}
                 sub={`${t('narx', 'цена')}: ${x.avgPrice ? money(x.avgPrice) + '/' + x.unit : t('hali xarid yo\'q', 'покупок ещё нет')}${dailyFeedUse(f, x.id) ? ` · ${formatNum(dailyFeedUse(f, x.id))} ${x.unit}/${t('kun', 'день')}` : ''}`}
                 right={

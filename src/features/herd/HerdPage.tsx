@@ -209,15 +209,15 @@ export function HerdPage() {
                   {g.status === 'closed' && <Badge>{t('Yopilgan', 'Закрыта')}</Badge>}
                 </div>
                 <div className="mt-3 grid grid-cols-3 gap-2 text-center text-sm">
-                  <div className="rounded-xl bg-stone-100 p-2 dark:bg-stone-800">
+                  <div className="rounded-2xl bg-stone-900/5 dark:bg-white/5 p-2">
                     <div className="font-bold">{formatNum(heads, 0)}</div>
                     <div className="text-xs text-stone-500">{t('bosh', 'гол.')}</div>
                   </div>
-                  <div className="rounded-xl bg-stone-100 p-2 dark:bg-stone-800">
+                  <div className="rounded-2xl bg-stone-900/5 dark:bg-white/5 p-2">
                     <div className="font-bold">{short(cost)}</div>
                     <div className="text-xs text-stone-500">{t('xarajat', 'затраты')}</div>
                   </div>
-                  <div className="rounded-xl bg-stone-100 p-2 dark:bg-stone-800">
+                  <div className="rounded-2xl bg-stone-900/5 dark:bg-white/5 p-2">
                     <div className="font-bold">{heads ? short(cost / heads) : '—'}</div>
                     <div className="text-xs text-stone-500">{t('1 bosh', '1 гол.')}</div>
                   </div>
@@ -229,7 +229,7 @@ export function HerdPage() {
       )}
 
       {sel ? (
-        <div className="pb-safe fixed inset-x-0 bottom-0 z-40 border-t border-stone-200 bg-white p-3 md:left-60 dark:border-stone-800 dark:bg-stone-900">
+        <div className="pb-safe fixed inset-x-0 bottom-0 z-40 glass-bar border-t border-glass-line p-3 md:left-60">
           <div className="mx-auto flex max-w-3xl items-center gap-2">
             <button className="text-sm font-medium text-brand-700" onClick={() => setSel(sel.size === animals.length ? new Set() : new Set(animals.map((a) => a.id)))}>
               {sel.size === animals.length ? t('Bekor', 'Снять') : t('Hammasi', 'Все')}
@@ -253,9 +253,9 @@ export function HerdPage() {
 
       <Sheet open={addOpen} onClose={() => setAddOpen(false)} title={t("Nima qo'shamiz?", 'Что добавить?')}>
         <div className="space-y-2">
-          <ListRow left={<IconTile icon={PawPrint} color="#9a3412" />} title={t('Bitta hayvon', 'Одно животное')} sub={t("Sigir, qo'y, echki, ot...", 'Корова, овца, коза, лошадь...')} onClick={() => nav('/animal/new')} className="rounded-2xl bg-stone-100 dark:bg-stone-800" />
-          <ListRow left={<IconTile icon={Baby} color="#db2777" />} title={t("Tug'ilgan bola(lar)", 'Приплод')} sub={t("Onasini tanlang — bolalar avtomatik qo'shiladi", 'Выберите мать — приплод добавится автоматически')} onClick={() => nav('/birth/new')} className="rounded-2xl bg-stone-100 dark:bg-stone-800" />
-          <ListRow left={<IconTile icon={Layers} color="#0369a1" />} title={t('Guruh / partiya', 'Группа / партия')} sub={t('Tovuq, baliq, quyon yoki poda', 'Птица, рыба, кролики или стадо')} onClick={() => nav('/group/new')} className="rounded-2xl bg-stone-100 dark:bg-stone-800" />
+          <ListRow left={<IconTile icon={PawPrint} color="#027a48" />} title={t('Bitta hayvon', 'Одно животное')} sub={t("Sigir, qo'y, echki, ot...", 'Корова, овца, коза, лошадь...')} onClick={() => nav('/animal/new')} className="rounded-2xl bg-stone-900/5 dark:bg-white/5" />
+          <ListRow left={<IconTile icon={Baby} color="#027a48" />} title={t("Tug'ilgan bola(lar)", 'Приплод')} sub={t("Onasini tanlang — bolalar avtomatik qo'shiladi", 'Выберите мать — приплод добавится автоматически')} onClick={() => nav('/birth/new')} className="rounded-2xl bg-stone-900/5 dark:bg-white/5" />
+          <ListRow left={<IconTile icon={Layers} color="#027a48" />} title={t('Guruh / partiya', 'Группа / партия')} sub={t('Tovuq, baliq, quyon yoki poda', 'Птица, рыба, кролики или стадо')} onClick={() => nav('/group/new')} className="rounded-2xl bg-stone-900/5 dark:bg-white/5" />
         </div>
       </Sheet>
 

@@ -86,9 +86,9 @@ export function BirthForm() {
           <div className="mb-2 flex items-center justify-between">
             <span className="text-sm font-medium text-stone-600 dark:text-stone-300">{t('Tirik bolalar', 'Живой приплод')} ({lt(species?.name)})</span>
             <div className="flex items-center gap-1">
-              <IconButton onClick={() => setKids(kids.slice(0, -1))} disabled={kids.length === 0} className="bg-white dark:bg-stone-900"><Minus size={18} /></IconButton>
+              <IconButton onClick={() => setKids(kids.slice(0, -1))} disabled={kids.length === 0} className="glass border border-glass-line"><Minus size={18} /></IconButton>
               <span className="w-8 text-center text-lg font-bold">{kids.length}</span>
-              <IconButton onClick={() => setKids([...kids, { tag: tagFor(kids.length), sex: 'f' }])} className="bg-white dark:bg-stone-900"><Plus size={18} /></IconButton>
+              <IconButton onClick={() => setKids([...kids, { tag: tagFor(kids.length), sex: 'f' }])} className="glass border border-glass-line"><Plus size={18} /></IconButton>
             </div>
           </div>
           <div className="mb-3 space-y-2">

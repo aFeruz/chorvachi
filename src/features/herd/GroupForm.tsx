@@ -47,7 +47,7 @@ export function GroupForm() {
   return (
     <Page back title={old ? t('Guruhni tahrirlash', 'Изменить группу') : t('Yangi guruh', 'Новая группа')}>
       <span className="mb-1 block text-sm font-medium text-stone-600 dark:text-stone-300">{t('Hayvon turi', 'Вид животных')}</span>
-      <div className="no-scrollbar -mx-3 mb-3 flex gap-2 overflow-x-auto px-3">
+      <div className="no-scrollbar -mx-4 mb-3 flex gap-2 overflow-x-auto px-4">
         {enabled.map((s) => (
           <button
             key={s.id}
@@ -56,7 +56,7 @@ export function GroupForm() {
             onClick={() => setSpeciesId(s.id)}
             className={cx(
               'flex shrink-0 flex-col items-center rounded-2xl border-2 px-3 py-2 text-xs font-medium',
-              speciesId === s.id ? 'border-brand-600 bg-brand-50 dark:bg-brand-900/30' : 'border-transparent bg-white dark:bg-stone-900',
+              speciesId === s.id ? 'border-brand-600 bg-brand-50 dark:bg-brand-900/30' : 'border-transparent bg-white/55 dark:bg-white/5',
               old && speciesId !== s.id && 'hidden',
             )}
           >

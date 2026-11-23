@@ -50,7 +50,7 @@ export function SpeciesPage() {
                   type="button"
                   aria-label={k}
                   onClick={() => setEdit({ ...edit, icon: k })}
-                  className={cx('grid aspect-square place-items-center rounded-xl border-2 transition', on ? 'border-brand-600 bg-brand-50 text-brand-700 dark:bg-brand-900/30' : 'border-transparent bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-300')}
+                  className={cx('grid aspect-square place-items-center rounded-xl border-2 transition', on ? 'border-brand-600 bg-brand-50 text-brand-700 dark:bg-brand-900/30' : 'border-transparent bg-stone-900/5 dark:bg-white/5 text-stone-600 dark:text-stone-300')}
                 >
                   <I size={22} />
                 </button>

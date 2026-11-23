@@ -35,7 +35,7 @@ export function PriceHint({
   const good = cmp && (kind === 'expense' ? !up : up)
 
   return (
-    <div className="mb-3 rounded-2xl border border-stone-200 bg-stone-50 p-3 text-sm dark:border-stone-800 dark:bg-stone-900/60">
+    <div className="mb-3 rounded-2xl border border-glass-line bg-white/50 p-3 text-sm dark:bg-white/5">
       <div className="flex items-center gap-3">
         <History size={18} className="shrink-0 text-stone-500" />
         <div className="min-w-0 flex-1">
@@ -78,7 +78,7 @@ export function PriceHint({
           className={cx(
             'mt-2 rounded-lg px-2 py-1.5 text-xs font-medium',
             same
-              ? 'bg-stone-200/70 text-stone-700 dark:bg-stone-800 dark:text-stone-300'
+              ? 'bg-stone-900/5 text-stone-700 dark:bg-white/10 dark:text-stone-300'
               : good
                 ? 'bg-brand-100 text-brand-800 dark:bg-brand-900/40 dark:text-brand-300'
                 : 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300',

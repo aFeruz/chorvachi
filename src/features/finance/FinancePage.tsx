@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { ChevronLeft, ChevronRight, Minus, Plus, Receipt, Search } from 'lucide-react'
 import { useFarm } from '../../state/farm'
 import { useSettings } from '../../state/settings'
-import { Button, Card, Empty, Fab, IconButton, Input, List, Money, Page, Segmented, Sheet } from '../../components/ui'
+import { Button, Card, cx, Empty, Fab, IconButton, Input, List, Page, Segmented, Sheet } from '../../components/ui'
 import { addMonths, formatDate, monthKey, today } from '../../lib/dates'
 import { TxRow } from './TxRow'
 import type { Expense, Income } from '../../db/types'
@@ -21,7 +21,7 @@ type Row = { kind: 'expense' | 'income'; e: Expense | Income }
 
 export function FinancePage() {
   const f = useFarm()
-  const { t, lt, lang } = useSettings()
+  const { t, lt, lang, short } = useSettings()
   const nav = useNavigate()
   const [kind, setKind] = useState<Kind>('all')
   const [month, setMonth] = useState<string | null>(monthKey(today()))
@@ -80,7 +80,7 @@ export function FinancePage() {
         <IconButton onClick={() => setMonth(monthKey(addMonths((month ?? monthKey(today())) + '-01', -1)))}>
           <ChevronLeft />
         </IconButton>
-        <button onClick={() => setMonth(month ? null : monthKey(today()))} className="flex-1 rounded-xl bg-white py-2 text-center font-semibold shadow-sm dark:bg-stone-900">
+        <button onClick={() => setMonth(month ? null : monthKey(today()))} className="glass h-11 flex-1 rounded-full border border-glass-line text-center font-semibold">
           {month ? monthName(lang, month) : t('Barcha vaqt', 'За всё время')}
         </button>
         <IconButton onClick={() => setMonth(monthKey(addMonths((month ?? monthKey(today())) + '-01', 1)))}>
@@ -91,15 +91,15 @@ export function FinancePage() {
       <div className="mb-3 grid grid-cols-3 gap-2 text-center">
         <Card className="p-2.5">
           <div className="text-xs text-stone-500">{t('Daromad', 'Доход')}</div>
-          <Money value={inc} tone="pos" usd={false} className="text-sm font-semibold" />
+          <div className="font-semibold text-brand-700 tabular-nums dark:text-brand-400">{short(inc)}</div>
         </Card>
         <Card className="p-2.5">
           <div className="text-xs text-stone-500">{t('Xarajat', 'Расход')}</div>
-          <Money value={exp} tone="neg" usd={false} className="text-sm font-semibold" />
+          <div className="font-semibold text-red-700 tabular-nums dark:text-red-400">{short(exp)}</div>
         </Card>
         <Card className="p-2.5">
           <div className="text-xs text-stone-500">{t('Natija', 'Итог')}</div>
-          <Money value={inc - exp} tone="auto" usd={false} className="text-sm font-semibold" />
+          <div className={cx('font-semibold tabular-nums', inc - exp > 0 && 'text-brand-700 dark:text-brand-400', inc - exp < 0 && 'text-red-700 dark:text-red-400')}>{short(inc - exp)}</div>
         </Card>
       </div>
 
@@ -108,15 +108,15 @@ export function FinancePage() {
         <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('Qidirish...', 'Поиск...')} className="pl-10" />
       </div>
       {usedCats.length > 1 && (
-        <div className="no-scrollbar -mx-3 mb-3 flex gap-2 overflow-x-auto px-3">
-          <button onClick={() => setCat('')} className={`h-8 shrink-0 rounded-full border px-3 text-sm ${!cat ? 'border-stone-800 bg-stone-800 text-white dark:border-stone-200 dark:bg-stone-200 dark:text-stone-900' : 'border-stone-300 dark:border-stone-700'}`}>
+        <div className="no-scrollbar -mx-4 mb-3 flex gap-2 overflow-x-auto px-4">
+          <button onClick={() => setCat('')} className={`h-9 shrink-0 rounded-full border px-3 text-sm ${!cat ? 'border-stone-800 bg-stone-800 text-white dark:border-stone-200 dark:bg-stone-200 dark:text-stone-900' : 'border-glass-line bg-white/55 dark:bg-white/5'}`}>
             {t('Barchasi', 'Все')}
           </button>
           {usedCats.map((c) => (
             <button
               key={c.id}
               onClick={() => setCat(cat === c.id ? '' : c.id)}
-              className={`flex h-8 shrink-0 items-center gap-1.5 rounded-full border px-3 text-sm ${cat === c.id ? 'border-stone-800 bg-stone-800 text-white dark:border-stone-200 dark:bg-stone-200 dark:text-stone-900' : 'border-stone-300 dark:border-stone-700'}`}
+              className={`flex h-9 shrink-0 items-center gap-1.5 rounded-full border px-3 text-sm ${cat === c.id ? 'border-stone-800 bg-stone-800 text-white dark:border-stone-200 dark:bg-stone-200 dark:text-stone-900' : 'border-glass-line bg-white/55 dark:bg-white/5'}`}
             >
               <span className="size-2.5 rounded-full" style={{ background: c.color }} />
               {lt(c.name)}

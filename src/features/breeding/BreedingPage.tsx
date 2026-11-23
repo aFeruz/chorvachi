@@ -77,7 +77,7 @@ export function BreedingPage() {
                     </div>
                     <Badge tone={d.tone}>{d.text}</Badge>
                   </div>
-                  <div className="mt-3 h-2 rounded-full bg-stone-100 dark:bg-stone-800">
+                  <div className="mt-3 h-2 rounded-full bg-stone-900/10 dark:bg-white/10">
                     <div className="h-2 rounded-full bg-pink-500" style={{ width: `${total ? (passed / total) * 100 : 0}%` }} />
                   </div>
                   <div className="mt-3 flex gap-2">

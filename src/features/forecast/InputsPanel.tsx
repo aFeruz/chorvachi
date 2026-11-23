@@ -29,7 +29,7 @@ const sourceLabel = (t: T, s: FarmSource) =>
 export function Fold({ title, sub, icon, children, defaultOpen = false, badge }: { title: string; sub?: string; icon?: ReactNode; children: ReactNode; defaultOpen?: boolean; badge?: ReactNode }) {
   const [open, setOpen] = useState(defaultOpen)
   return (
-    <div className="mb-3 overflow-hidden rounded-2xl border border-stone-200 bg-white shadow-sm dark:border-stone-800 dark:bg-stone-900">
+    <div className="mb-3 glass overflow-hidden rounded-3xl border border-glass-line">
       <button type="button" onClick={() => setOpen(!open)} className="flex w-full items-center gap-3 px-4 py-3 text-left">
         {icon}
         <span className="min-w-0 flex-1">
@@ -87,7 +87,7 @@ export function InputsPanel({ input, set, sources, missing }: { input: ForecastI
                 key={m}
                 type="button"
                 onClick={() => set({ [key]: on ? sel.filter((x) => x !== m) : [...sel, m].sort((a, b) => a - b) } as Partial<ForecastInput>)}
-                className={cx('h-8 rounded-lg text-xs font-medium', on ? 'bg-brand-600 text-white' : 'bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-300')}
+                className={cx('h-8 rounded-lg text-xs font-medium', on ? 'bg-brand-600 text-white' : 'bg-stone-900/5 dark:bg-white/5 text-stone-600 dark:text-stone-300')}
               >
                 {n}
               </button>
@@ -104,7 +104,7 @@ export function InputsPanel({ input, set, sources, missing }: { input: ForecastI
         <select
           value={v[key]}
           onChange={(e) => set({ [key]: Number(e.target.value) } as Partial<ForecastInput>)}
-          className="h-12 w-full rounded-xl border border-stone-300 bg-white px-3 dark:border-stone-700 dark:bg-stone-900"
+          className="h-12 w-full rounded-2xl border border-stone-900/10 bg-white/75 px-3 dark:border-white/10 dark:bg-white/5"
         >
           {names.map((n, i) => <option key={i} value={i + 1}>{n}</option>)}
         </select>

@@ -5,7 +5,7 @@ import { SpeciesAvatar } from '../../components/icons'
 import { useFarm } from '../../state/farm'
 import { useSettings } from '../../state/settings'
 import {
-  Badge, Button, Callout, Card, DateInput, Empty, Field, IconButton, KV, List, ListRow, Money, NumInput, Page, Section, Sheet, Textarea, useUi,
+  Badge, Button, Callout, Card, cx, DateInput, Empty, Field, IconButton, KV, List, ListRow, Money, NumInput, Page, Section, Sheet, Textarea, useUi,
 } from '../../components/ui'
 import { ageText, healthLabel, sexLabel, statusLabel, statusTone } from '../../components/labels'
 import { WeightChart } from '../../components/Sparkline'
@@ -133,12 +133,12 @@ export function AnimalPage() {
           {(() => {
             const r = saleResult(saleShare, cost.total)
             return (
-              <Card className={r.isLoss ? 'border-red-200 dark:border-red-900' : 'border-brand-200 dark:border-brand-900'}>
+              <div className={cx('rounded-3xl border p-4', r.isLoss ? 'border-red-200 bg-red-50/70 dark:border-red-900 dark:bg-red-950/30' : 'border-brand-200 bg-brand-50/70 dark:border-brand-900 dark:bg-brand-950/30')}>
                 <KV label={t('Sotilgan narx', 'Цена продажи')} value={money(saleShare)} />
                 <KV label={t('Tannarx', 'Себестоимость')} value={money(cost.total)} />
                 <KV label={r.isLoss ? t('Zarar', 'Убыток') : t('Foyda', 'Прибыль')} value={<Money value={r.profit} tone="auto" className="font-bold" />} />
                 <KV label="ROI" value={pct(r.roiPct)} />
-              </Card>
+              </div>
             )
           })()}
         </Section>
@@ -160,7 +160,7 @@ export function AnimalPage() {
                       <span>{lt(c?.name)}</span>
                       <span className="tabular-nums">{money(v)}</span>
                     </div>
-                    <div className="h-1.5 rounded-full bg-stone-100 dark:bg-stone-800">
+                    <div className="h-1.5 rounded-full bg-stone-900/10 dark:bg-white/10">
                       <div className="h-1.5 rounded-full" style={{ width: `${(v / cost.total) * 100}%`, background: c?.color }} />
                     </div>
                   </div>

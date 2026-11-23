@@ -122,7 +122,7 @@ export function HealthPage() {
           <DateInput value={nextDate} onChange={setNextDate} />
           <div className="mt-2 flex gap-2">
             {[[30, t('1 oy', '1 мес')], [90, t('3 oy', '3 мес')], [180, t('6 oy', '6 мес')], [365, t('1 yil', '1 год')]].map(([d, l]) => (
-              <button key={d} type="button" onClick={() => setNextDate(addDays(date, d as number))} className="rounded-lg bg-stone-200 px-2 py-1 text-xs dark:bg-stone-800">+{l}</button>
+              <button key={d} type="button" onClick={() => setNextDate(addDays(date, d as number))} className="rounded-full bg-stone-900/5 px-3 py-1.5 text-xs font-medium dark:bg-white/10">+{l}</button>
             ))}
           </div>
         </Field>

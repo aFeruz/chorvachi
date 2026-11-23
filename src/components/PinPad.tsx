@@ -83,7 +83,7 @@ function Key({ children, onClick, disabled, ...rest }: { children: React.ReactNo
       onClick={onClick}
       disabled={disabled}
       {...rest}
-      className="grid size-[72px] place-items-center rounded-full bg-white text-2xl font-medium shadow-sm ring-1 ring-stone-200 transition select-none active:scale-95 active:bg-stone-100 disabled:opacity-40 dark:bg-stone-800 dark:ring-stone-700 dark:active:bg-stone-700"
+      className="grid size-[72px] place-items-center rounded-full glass text-2xl font-medium ring-1 ring-white/80 transition select-none active:scale-95 active:bg-white/90 disabled:opacity-40 dark:ring-white/10 dark:active:bg-white/15"
     >
       {children}
     </button>

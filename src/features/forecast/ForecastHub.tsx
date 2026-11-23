@@ -12,11 +12,11 @@ import { goalHint, goalLabel } from './texts'
 
 const GOAL_ICON: Record<GoalType, [typeof Flag, string]> = {
   profit: [BadgeCheck, '#027a48'],
-  heads: [Flag, '#9a3412'],
-  cash: [CircleDollarSign, '#2563eb'],
-  monthly: [TrendingUp, '#0d9488'],
-  horizon: [Clock, '#7c3aed'],
-  need: [Target, '#db2777'],
+  heads: [Flag, '#027a48'],
+  cash: [CircleDollarSign, '#027a48'],
+  monthly: [TrendingUp, '#027a48'],
+  horizon: [Clock, '#027a48'],
+  need: [Target, '#027a48'],
   risk: [ShieldAlert, '#dc2626'],
 }
 
@@ -28,18 +28,21 @@ export default function ForecastHub() {
 
   return (
     <Page back title={t('Prognoz', 'Прогноз')}>
-      <Card className="mb-4 border-0 bg-gradient-to-br from-brand-700 to-brand-900 text-white">
-        <div className="text-lg font-bold">{t('Kelajakni hisoblab ko\'ring', 'Посчитайте будущее')}</div>
-        <p className="mt-1 text-sm opacity-90">
+      <section className="glass mb-4 rounded-[32px] border border-glass-line p-5">
+        <span className="glass mb-3 grid size-12 place-items-center rounded-2xl border border-glass-line text-brand-700 dark:text-brand-400">
+          <TrendingUp size={24} />
+        </span>
+        <div className="text-xl font-bold tracking-tight">{t('Kelajakni hisoblab ko\'ring', 'Посчитайте будущее')}</div>
+        <p className="mt-1 text-sm text-stone-600 dark:text-stone-300">
           {t(
             "Podangiz qachon ko'payadi, qachon foydaga chiqasiz, qancha xarajat ketadi va nimalar kerak bo'ladi — o'lim, kasallik va narx o'zgarishlarini hisobga olib.",
             'Когда вырастет стадо, когда выйдете в прибыль, сколько уйдёт расходов и что понадобится — с учётом падежа, болезней и колебаний цен.',
           )}
         </p>
-        <Button variant="secondary" className="mt-3 border-0 text-brand-800" icon={<Plus size={18} />} onClick={() => nav('/forecast/new')}>
+        <Button className="mt-4" icon={<Plus size={18} />} onClick={() => nav('/forecast/new')}>
           {t('Yangi prognoz', 'Новый прогноз')}
         </Button>
-      </Card>
+      </section>
 
       <Section title={t('Qaysi savolga javob kerak?', 'На какой вопрос ответить?')}>
         <div className="grid gap-2 sm:grid-cols-2">

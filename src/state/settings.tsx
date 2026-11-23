@@ -43,7 +43,7 @@ export function SettingsProvider({ children, fallback }: { children: ReactNode; 
         settings.theme === 'dark' ||
         (settings.theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)
       document.documentElement.classList.toggle('dark', dark)
-      document.querySelector('meta[name=theme-color]')?.setAttribute('content', dark ? '#0c0a09' : '#027a48')
+      document.querySelector('meta[name=theme-color]')?.setAttribute('content', dark ? '#0b1210' : '#e8eeea')
     }
     apply()
     document.documentElement.lang = settings.lang

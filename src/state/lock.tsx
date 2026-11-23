@@ -131,7 +131,7 @@ function LockScreen({ onUnlock }: { onUnlock: () => void }) {
   }
 
   return (
-    <div className="pt-safe pb-safe fixed inset-0 z-[55] flex flex-col items-center justify-center overflow-y-auto bg-stone-100 px-6 dark:bg-stone-950">
+    <div className="pt-safe pb-safe fixed inset-0 z-[55] flex flex-col items-center justify-center overflow-y-auto app-bg px-6">
       <img src="./favicon.svg" className="mb-3 size-16 drop-shadow" alt="" />
       <div className="mb-6 flex items-center gap-2 text-stone-500">
         <Lock size={16} />

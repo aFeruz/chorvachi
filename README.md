@@ -115,6 +115,7 @@ Chorvachilikdagi eng muhim savollarga javob beradi:
 - Poda qiymati uchun bozor narxi kiritilmagan bo'lsa, shu turdagi oxirgi sotuvingiz narxi olinadi
 
 ### Boshqa
+- **Zamonaviy «shisha» (Liquid Glass) dizayni**: yashil-kulrang xira fon, shaffof kartalar, suzib turuvchi pastki menyu; yorug' va qorong'i rejimda
 - Telefonga eslatmalar (Android bildirishnomalari)
 - **PIN-kod bilan qulf va «Chiqish»**: ilova ochilganda va boshqa ilovaga o'tib qaytganda PIN so'raladi (avtomatik qulflash vaqti tanlanadi); PIN ochiq saqlanmaydi (SHA-256 xesh), 5 marta xatodan keyin 30 soniya kutish
 - JSON zaxira va tiklash, yorug' va qorong'i rejim

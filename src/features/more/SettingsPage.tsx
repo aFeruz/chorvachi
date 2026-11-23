@@ -46,7 +46,7 @@ export function SettingsPage() {
       <Section title={t('Xavfsizlik', 'Безопасность')}>
         <Card>
           <div className="mb-3 flex items-center gap-3">
-            <span className={`grid size-10 place-items-center rounded-xl ${hasPin ? 'bg-brand-100 text-brand-700 dark:bg-brand-900/50 dark:text-brand-300' : 'bg-stone-100 text-stone-500 dark:bg-stone-800'}`}>
+            <span className={`grid size-10 place-items-center rounded-xl ${hasPin ? 'bg-brand-100 text-brand-700 dark:bg-brand-900/50 dark:text-brand-300' : 'bg-stone-900/5 dark:bg-white/5 text-stone-500'}`}>
               {hasPin ? <ShieldCheck size={20} /> : <ShieldOff size={20} />}
             </span>
             <div className="flex-1">

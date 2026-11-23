@@ -99,7 +99,7 @@ export function SaleSheet({ animalIds, groupId, onClose }: { animalIds?: ID[]; g
           <NumInput value={count} onChange={setCount} suffix={t('bosh', 'гол.')} />
         </Field>
       )}
-      <div className="mb-3 rounded-2xl bg-stone-100 p-3 dark:bg-stone-800">
+      <div className="mb-3 rounded-2xl bg-stone-900/5 dark:bg-white/5 p-3">
         <KV label={t('Tannarx (sarflangan pul)', 'Себестоимость (вложено)')} value={money(cost)} strong />
         {heads > 1 && <KV label={t('1 bosh uchun', 'На 1 голову')} value={money(cost / heads)} />}
       </div>
@@ -131,7 +131,7 @@ export function SaleSheet({ animalIds, groupId, onClose }: { animalIds?: ID[]; g
           )}
           {mode === 'meat' && (
             <>
-              <div className="mb-3 flex items-center rounded-xl bg-stone-100 px-3 text-sm dark:bg-stone-800">
+              <div className="mb-3 flex items-center rounded-2xl bg-stone-900/5 dark:bg-white/5 px-3 text-sm">
                 {t("Go'sht", 'Мясо')}: <b className="ml-1">{formatNum(meatKg)} kg</b>
               </div>
               <Field label={t("1 kg go'sht narxi", 'Цена 1 кг мяса')}>

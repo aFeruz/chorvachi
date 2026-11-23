@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'Chorva Hisob',
   webDir: 'dist',
   android: {
-    backgroundColor: '#f5f5f4',
+    backgroundColor: '#e8eeea',
   },
   plugins: {
     LocalNotifications: {
