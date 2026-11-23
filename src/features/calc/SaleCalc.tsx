@@ -81,11 +81,11 @@ export function SaleCalc() {
         </div>
       </Section>
 
-      <Card className={cx('sticky bottom-24 mb-4 md:bottom-4', profit >= 0 ? 'border-brand-300 dark:border-brand-800' : 'border-red-300 dark:border-red-900')}>
+      <div className={cx('glass-sheet sticky bottom-24 z-10 mb-4 rounded-3xl border p-4 md:bottom-4', profit >= 0 ? 'border-brand-300 dark:border-brand-800' : 'border-red-300 dark:border-red-900')}>
         <div className="text-sm text-stone-500">{profit >= 0 ? t('Kutilgan foyda', 'Ожидаемая прибыль') : t('Kutilgan zarar', 'Ожидаемый убыток')}</div>
         <div className="text-2xl font-bold"><Money value={profit} tone="auto" /></div>
         <div className="text-sm text-stone-500">ROI {pct(roi)} · {t('oyiga', 'в месяц')} ~{money(perMonth)}</div>
-      </Card>
+      </div>
 
       <Card className="mb-3">
         <KV label={t('Yakuniy vazn (1 bosh)', 'Конечный вес (1 гол.)')} value={`${formatNum(endW)} kg`} />

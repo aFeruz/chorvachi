@@ -344,8 +344,8 @@ function ForecastPage() {
       }
     >
       {top}
+      <div className="glass-float no-print sticky top-[calc(env(safe-area-inset-top)+4.5rem)] z-10 mb-3 rounded-full lg:hidden">
       <Segmented
-        className="no-print sticky top-[calc(env(safe-area-inset-top)+3.6rem)] z-10 mb-3 shadow-sm lg:hidden"
         value={tab}
         onChange={setTab}
         options={[
@@ -353,6 +353,7 @@ function ForecastPage() {
           { value: 'results', label: <span className="flex items-center justify-center gap-1.5">{t('Natija', 'Результат')}{busy && <Loader2 size={14} className="animate-spin" />}</span> },
         ]}
       />
+      </div>
       <div className="grid gap-4 lg:grid-cols-[minmax(0,400px)_1fr]">
         <div className={cx(tab !== 'inputs' && 'hidden lg:block', 'no-print min-w-0')}>
           {inputsPane}

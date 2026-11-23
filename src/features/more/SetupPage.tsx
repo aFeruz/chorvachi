@@ -249,7 +249,7 @@ export function SetupPage() {
       )}
 
       {items.length > 0 && (
-        <div className="pb-safe sticky bottom-20 z-10 mt-2 md:bottom-4">
+        <div className="pb-safe sticky bottom-24 z-10 mt-2 md:bottom-4">
           <Button full size="lg" disabled={busy || !selected.length} onClick={apply} icon={<Wand2 size={20} />} className="shadow-lg">
             {t(`Tanlanganlarni qo'shish (${selected.length})`, `Добавить выбранное (${selected.length})`)}
           </Button>
